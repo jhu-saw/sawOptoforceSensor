@@ -11,11 +11,15 @@ cisst/SAW component to interface via USB (virtual COM port) to Optoforce force s
 *Linux:*
 
  + Linux automatically creates serial device, such as `ttyACM0`.
- + Need to run as "root" to access serial port.
+ + Check default permissions on `/dev/ttyACM0` using `ls -l /dev/ttyACM0`.  On Ubuntu a typical output should be:
+ ```
+ crw-rw---- 1 root dialout 166, 0 Jul 27 16:44 /dev/ttyACM0
+ ```
+ + Then add yourself to the `dialout` group or whatever group has read-write permissions on the tty.  Use `adduser <user_id> dialout`.  You need to logout and log back in for that change to be effective.  You can verify your permissions using `id`.  
  + Example:
 
-   ```c++
-   sudo ./OptoforceExample /dev/ttyACM0  OMD-10-SE-10N.json
+   ```sh
+   OptoforceExample /dev/ttyACM0  OMD-10-SE-10N.json
    ```
 
 The software expects a JSON format configuration file, which should specify the force sensor scale and
@@ -36,7 +40,6 @@ the `SetLength` write command.
 
 Links
 =====
-
  * License: http://github.com/jhu-cisst/cisst/blob/master/license.txt
  * JHU-LCSR software: http://jhu-lcsr.github.io/software/
  
