@@ -30,7 +30,7 @@ if (cisst_FOUND_AS_REQUIRED)
 
   # catkin/ROS paths
   cisst_is_catkin_build (sawOptoforceSensor_IS_CATKIN_BUILT)
-  if (sawOptoforce_IS_CATKIN_BUILT)
+  if (sawOptoforceSensor_IS_CATKIN_BUILT)
     set (sawOptoforceSensor_CONFIG_FILE_DIR "${CATKIN_DEVEL_PREFIX}/share/sawOptoforceSensor/cmake")
     set (LIBRARY_OUTPUT_PATH "${sawOptoforceSensor_BINARY_DIR}/lib")
   else ()
@@ -67,6 +67,7 @@ if (cisst_FOUND_AS_REQUIRED)
 
   set (sawOptoforceSensor_CMAKE_CONFIG_FILE
        "${sawOptoforceSensor_CONFIG_FILE_DIR}/sawOptoforceSensorConfig.cmake")
+
   configure_file ("${CMAKE_CURRENT_SOURCE_DIR}/cmake/sawOptoforceSensorConfig.cmake.in"
                   "${sawOptoforceSensor_CMAKE_CONFIG_FILE}"
                   @ONLY)

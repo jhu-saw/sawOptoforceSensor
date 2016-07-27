@@ -9,6 +9,8 @@
 #
 # --- end cisst license ---
 
+cmake_minimum_required (VERSION 2.8)
+
 # List cisst libraries needed
 set (REQUIRED_CISST_LIBRARIES cisstCommon
                               cisstVector
@@ -23,6 +25,12 @@ if (cisst_FOUND_AS_REQUIRED)
 
   # load cisst configuration
   include (${CISST_USE_FILE})
+
+  # catkin/ROS paths
+  cisst_is_catkin_build (sawOptoforceSensorExamples_IS_CATKIN_BUILT)
+  if (sawOptoforceSensorExamples_IS_CATKIN_BUILT)
+    set (EXECUTABLE_OUTPUT_PATH "${CATKIN_DEVEL_PREFIX}/bin")
+  endif ()
 
   find_package (sawOptoforceSensor REQUIRED)
   include_directories (${sawOptoforceSensor_INCLUDE_DIR})
@@ -39,5 +47,3 @@ if (cisst_FOUND_AS_REQUIRED)
 else (cisst_FOUND_AS_REQUIRED)
   message ("Information: OptoforceExample will not be compiled, it requires ${REQUIRED_CISST_LIBRARIES}")
 endif (cisst_FOUND_AS_REQUIRED)
-
-

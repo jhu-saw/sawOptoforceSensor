@@ -27,7 +27,7 @@ if (WIN32)
 endif (WIN32)
 
 if ("${sawOptoforceSensor_CMAKE_CONFIG_FILE}" STREQUAL "${THIS_FILE_PATH}")
-  # we're using the build directories		
+  # we're using the build directories
   set (sawOptoforceSensor_INCLUDE_DIR "@sawOptoforceSensor_INCLUDE_DIR@")
   set (sawOptoforceSensor_LIBRARY_DIR "@sawOptoforceSensor_LIBRARY_DIR@")
 else ()
