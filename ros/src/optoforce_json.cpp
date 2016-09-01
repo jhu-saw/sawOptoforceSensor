@@ -24,6 +24,7 @@ http://www.cisst.org/cisst/license.txt.
 
 #include <cisstCommon/cmnPath.h>
 #include <cisstCommon/cmnUnits.h>
+#include <cisstCommon/cmnGetChar.h>
 #include <cisstCommon/cmnCommandLineOptions.h>
 #include <cisstMultiTask/mtsTaskManager.h>
 #include <sawOptoforceSensor/mtsOptoforce3D.h>
@@ -59,6 +60,8 @@ int main(int argc, char * argv[])
     options.AddOptionOneValue("p", "ros-period",
                               "period in seconds to read all tool positions (default 0.01, 10 ms, 100Hz).  There is no point to have a period higher than the tracker component",
                               cmnCommandLineOptions::OPTIONAL_OPTION, &rosPeriod);
+    options.AddOptionNoValue("t", "text-only",
+                             "text only interface, do not create Qt widgets");
 
     // check that all required options have been provided
     std::string errorMessage;
@@ -71,6 +74,8 @@ int main(int argc, char * argv[])
     options.PrintParsedArguments(arguments);
     std::cout << "Options provided:" << std::endl << arguments << std::endl;
 
+    const bool hasQt = !options.IsSet("text-only");
+
     // create the components
     mtsOptoforce3D * sensor = new mtsOptoforce3D("Optoforce3D", serialPort);
     sensor->Configure(jsonConfigFile);
@@ -82,13 +87,13 @@ int main(int argc, char * argv[])
     // ROS bridge
     mtsROSBridge * rosBridge = new mtsROSBridge("OptoforceBridge", rosPeriod, true);
 
-    // create a Qt user interface
-    QApplication application(argc, argv);
-
-    // organize all widgets in a tab widget
-    QTabWidget * tabWidget = new QTabWidget;
-
-    std::string toolName;
+    // create a Qt user interface if needed
+    QApplication * application;
+    QTabWidget * tabWidget;
+    if (hasQt) {
+        application = new QApplication(argc, argv);
+        tabWidget = new QTabWidget;
+    }
 
     // configure the bridge
     rosBridge->AddPublisherFromCommandRead<prmForceCartesianGet, geometry_msgs::WrenchStamped>
@@ -106,9 +111,14 @@ int main(int argc, char * argv[])
     componentManager->CreateAllAndWait(5.0 * cmn_s);
     componentManager->StartAllAndWait(5.0 * cmn_s);
 
-    // run Qt user interface
-    tabWidget->show();
-    application.exec();
+    if (hasQt) {
+        tabWidget->show();
+        application->exec();
+    } else {
+        do {
+            std::cout << "Press 'q' to quit" << std::endl;
+        } while (cmnGetChar() != 'q');
+    }
 
     // kill all components and perform cleanup
     componentManager->KillAllAndWait(5.0 * cmn_s);
