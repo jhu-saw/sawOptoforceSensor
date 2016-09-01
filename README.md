@@ -15,7 +15,7 @@ cisst/SAW component to interface via USB (virtual COM port) to Optoforce force s
  ```
  crw-rw---- 1 root dialout 166, 0 Jul 27 16:44 /dev/ttyACM0
  ```
- + Then add yourself to the `dialout` group or whatever group has read-write permissions on the tty.  Use `adduser <user_id> dialout`.  You need to logout and log back in for that change to be effective.  You can verify your permissions using `id`.  
+ + Then add yourself to the `dialout` group or whatever group has read-write permissions on the tty.  Use `adduser <user_id> dialout`.  You need to logout and log back in for that change to be effective.  You can verify your user Id using the `id` command.  
  + Example:
 
    ```sh
@@ -36,7 +36,6 @@ measurement will be a coupling of the forces and torques. If you know where the 
 to decouple the measurements and extract the forces. The software component supports this, assuming that
 the JSON file specifies the correct `cal-matrix` and you specify where the forces are applied by invoking
 the `SetLength` write command.
-
 
 Links
 =====
