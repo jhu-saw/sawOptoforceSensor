@@ -50,6 +50,7 @@ int main(int argc, char * argv[])
     std::string jsonConfigFile = "";
     std::string serialPort = "";
     double rosPeriod = 10.0 * cmn_ms;
+    std::string rosNamespace = "/optoforce";
 
     options.AddOptionOneValue("j", "json-config",
                               "json configuration file",
@@ -60,6 +61,9 @@ int main(int argc, char * argv[])
     options.AddOptionOneValue("p", "ros-period",
                               "period in seconds to read all tool positions (default 0.01, 10 ms, 100Hz).  There is no point to have a period higher than the tracker component",
                               cmnCommandLineOptions::OPTIONAL_OPTION, &rosPeriod);
+    options.AddOptionOneValue("n", "ros-namespace",
+                              "ROS topic namespace, default is \"/optoforce\" (topic is \"/optoforce/wrench\")",
+                              cmnCommandLineOptions::OPTIONAL_OPTION, &rosNamespace);
     options.AddOptionNoValue("t", "text-only",
                              "text only interface, do not create Qt widgets");
 
@@ -85,7 +89,10 @@ int main(int argc, char * argv[])
     componentManager->AddComponent(sensor);
 
     // ROS bridge
-    mtsROSBridge * rosBridge = new mtsROSBridge("OptoforceBridge", rosPeriod, true);
+    std::string bridgeName = "sawOptoforceSensor" + rosNamespace;
+    std::replace(bridgeName.begin(), bridgeName.end(), '/', '_');
+    mtsROSBridge * rosBridge = new mtsROSBridge(bridgeName,
+                                                rosPeriod, true);
 
     // create a Qt user interface if needed
     QApplication * application;
@@ -98,7 +105,7 @@ int main(int argc, char * argv[])
     // configure the bridge
     rosBridge->AddPublisherFromCommandRead<prmForceCartesianGet, geometry_msgs::WrenchStamped>
         ("Force", "GetForceTorque",
-         "/optoforce/wrench");
+         rosNamespace + "/wrench");
 
     // add the bridge after all interfaces have been created
     componentManager->AddComponent(rosBridge);
