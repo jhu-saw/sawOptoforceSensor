@@ -302,10 +302,6 @@ void mtsOptoforce3D::Run(void)
 			}
 				
 				Force.Assign(ForceCurrent);
-				/*for (int i=0; i<3; i++)
-					Force.Element(i) = 0.5*ForceCurrent.Element(i) + */
-				//						0.5*ForcePrevious.Element(i);
-			//	ForcePrevious.Assign(Force);
 			}
 			else {
 				Force = RawSensor - bias;
