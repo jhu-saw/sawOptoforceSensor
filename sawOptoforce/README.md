@@ -33,6 +33,7 @@ to decouple the measurements and extract the forces. The software component supp
 the JSON file specifies the correct `cal-matrix` and you specify where the forces are applied by invoking
 the `SetLength` write command.
 
+The final calibration  matrix for OMD-45-FE-1000N sensor can be found in share/calibration_matrix_OMD-45-FE-1000N_sensor.matrix_30.json
 
 Links
 =====

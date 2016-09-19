@@ -47,20 +47,20 @@ private:
     mtsFunctionWrite SetScale;
 
 protected:
-	std::vector<vctDouble6> force_pos;    // The vector contains information of applied force and its location
-	vctDouble3 Moment;                    //Moment calculated by stan_force and position
-	vctDynamicMatrix<double> Matrix_f;
-	vctDynamicMatrix<double> f_inverse;
-	vctDynamicVector<double> Vector_a;
+    std::vector<vctDouble6> force_pos;    // The vector contains information of applied force and its location
+    vctDouble3 Moment;                    //Moment calculated by stan_force and position
+    vctDynamicMatrix<double> Matrix_f;
+    vctDynamicMatrix<double> f_inverse;
+    vctDynamicVector<double> Vector_a;
 //	vctDynamicMatrix<double> Matrix_a;
-	vctDouble3 SensorRaw;				 //Raw sensor readings used for getting Matrix_s
-	std::vector<vctDouble3> S_raw;       //The matrix containing raw sensor readings
-	vctDynamicVector<double> S;
+    vctDouble3 SensorRaw;				 //Raw sensor readings used for getting Matrix_s
+    std::vector<vctDouble3> S_raw;       //The matrix containing raw sensor readings
+    vctDynamicVector<double> S;
 
 
 public:
 
-	SensorCalibration() : mtsTaskMain("SensorCalibration")
+    SensorCalibration() : mtsTaskMain("SensorCalibration")
     {
         mtsInterfaceRequired *req = AddInterfaceRequired("Input", MTS_OPTIONAL);
         if (req) {
@@ -85,112 +85,112 @@ public:
     void Configure(const std::string&) {}
 
     void Startup() {
-		vctDouble3 scale;
+        vctDouble3 scale;
         GetScale(scale);
         std::cout << "Force sensor scale = " << scale << std::endl;
         std::cout << "Commands: p = print menu, z = hardware bias, u = hardware unbias, q = quit"
                   << std::endl << std::endl;
-	}
+    }
     
-	void Run() {
+    void Run() {
 
 //		ProcessQueuedCommands();
 
-		prmForceCartesianGet force;
-		unsigned short count, status;
-		double period;    // task period in seconds
-		GetTaskPeriod(period);
-		GetForceCartesian(force);
-		GetStatus(status);
+        prmForceCartesianGet force;
+        unsigned short count, status;
+        double period;    // task period in seconds
+        GetTaskPeriod(period);
+        GetForceCartesian(force);
+        GetStatus(status);
 
-		if (force.Valid()) {
-			if (cmnKbHit()) {
-				char c = cmnGetChar();
-				switch (c) {
-				case 'p':   // Print menu
-					PrintMenu();
-					break;
-				//case 'z':   // Hardware bias (send 9 byte packet to sensor)
-				//	std::cout << "Biasing.. " << std::endl;
-				//	Zero();
-				//	break;
-				//case 'u':   // Hardware unbias (send 9 byte packet to sensor)
-				//	std::cout << "Unbiasing.. " << std::endl;
-				//	UnZero();
-				//	break;
-				//case 'q':   // quit program
-				//	std::cout << "Exiting.. " << std::endl;
-				//	this->Kill();
-				//	break;
-				}
-			}
+        if (force.Valid()) {
+            if (cmnKbHit()) {
+                char c = cmnGetChar();
+                switch (c) {
+                case 'p':   // Print menu
+                    PrintMenu();
+                    break;
+                //case 'z':   // Hardware bias (send 9 byte packet to sensor)
+                //	std::cout << "Biasing.. " << std::endl;
+                //	Zero();
+                //	break;
+                //case 'u':   // Hardware unbias (send 9 byte packet to sensor)
+                //	std::cout << "Unbiasing.. " << std::endl;
+                //	UnZero();
+                //	break;
+                //case 'q':   // quit program
+                //	std::cout << "Exiting.. " << std::endl;
+                //	this->Kill();
+                //	break;
+                }
+            }
 
-				//      std::cout << force.Force() << std::endl;
-				/*printf("%8.2lf || %8.2lf || %8.2lf || %8hu || %04hx || %8.3lf\r",
-					force.Force().X(), force.Force().Y(), force.Force().Z(),
-					count, status, period);*/
-		}
-		else
-			printf("Force invalid                                 \r");
+                //      std::cout << force.Force() << std::endl;
+                /*printf("%8.2lf || %8.2lf || %8.2lf || %8hu || %04hx || %8.3lf\r",
+                    force.Force().X(), force.Force().Y(), force.Force().Z(),
+                    count, status, period);*/
+        }
+        else
+            printf("Force invalid                                 \r");
 
-		osaSleep(0.01);  // to avoid taking too much CPU time
-	}
+        osaSleep(0.01);  // to avoid taking too much CPU time
+    }
 
-	void Getforce_pos() {
+    void Getforce_pos() {
 
-		/*std::ofstream jsonStream;
-		Json::Value jsonConfig;
-		Json::StyledWriter jsonWriter;*/
+        /*std::ofstream jsonStream;
+        Json::Value jsonConfig;
+        Json::StyledWriter jsonWriter;*/
 
-		vctDouble6 b;
-		std::cout << "Please specify the force (N) used to calculate the calibration matrix" << std::endl;
-		std::cin >> b[0] >> b[1] >> b[2];
-		std::cout << "Please specify the position of the applied force" << std::endl;
-		std::cin >> b[3] >> b[4] >> b[5];
-		force_pos.push_back(b);
+        vctDouble6 b;
+        std::cout << "Please specify the force (N) used to calculate the calibration matrix" << std::endl;
+        std::cin >> b[0] >> b[1] >> b[2];
+        std::cout << "Please specify the position of the applied force" << std::endl;
+        std::cin >> b[3] >> b[4] >> b[5];
+        force_pos.push_back(b);
 
-		/*Json::Value Force_pos;
-		cmnDataJSON<vctDouble6>::SerializeText(b, Force_pos);
-		jsonConfig["force_position"] = Force_pos;
+        /*Json::Value Force_pos;
+        cmnDataJSON<vctDouble6>::SerializeText(b, Force_pos);
+        jsonConfig["force_position"] = Force_pos;
 
-		jsonStream.open(filename);
-		jsonStream << jsonWriter.write(jsonConfig) << std::endl;
-		jsonStream.close();*/
-	}
+        jsonStream.open(filename);
+        jsonStream << jsonWriter.write(jsonConfig) << std::endl;
+        jsonStream.close();*/
+    }
 
     void GetSensorReading(){
 
-		/*std::ofstream jsonStream;
-		Json::Value jsonConfig;
-		Json::StyledWriter jsonWriter;*/
+        /*std::ofstream jsonStream;
+        Json::Value jsonConfig;
+        Json::StyledWriter jsonWriter;*/
 
-		vctDouble3 b;  //Temporal vector to save three sensor readings of each iteration
-		b.SetAll(0);
-		osaSleep(0.1);
-		for (int i = 0; i < 50; i++) {
-			prmForceCartesianGet force;
-			GetForceCartesian(force);
-			b[0] += force.Force().X();
-			b[1] += force.Force().Y();
-			b[2] += force.Force().Z();
-		}
-		b.Divide(50);
-		osaSleep(0.1);
-		S_raw.push_back(b);
+        vctDouble3 b;  //Temporal vector to save three sensor readings of each iteration
+        b.SetAll(0);
+        osaSleep(0.1);
+        for (int i = 0; i < 50; i++) {
+            prmForceCartesianGet force;
+            GetForceCartesian(force);
+            b[0] += force.Force().X();
+            b[1] += force.Force().Y();
+            b[2] += force.Force().Z();
+        }
+        b.Divide(50);
+        osaSleep(0.1);
+        S_raw.push_back(b);
 
-		/*Json::Value Sensorreading;
-		cmnDataJSON<vctDouble3>::SerializeText(b, Sensorreading);
-		jsonConfig["sensorreading"] = Sensorreading;
+        /*Json::Value Sensorreading;
+        cmnDataJSON<vctDouble3>::SerializeText(b, Sensorreading);
+        jsonConfig["sensorreading"] = Sensorreading;
 
-		jsonStream.open(filename);
-		jsonStream << jsonWriter.write(jsonConfig) << std::endl;
-		jsonStream.close();*/
+        jsonStream.open(filename);
+        jsonStream << jsonWriter.write(jsonConfig) << std::endl;
+        jsonStream.close();*/
     }
     
     void ForceMoment(void)
     {
         vctDynamicMatrix<double> Matrix_f_tem(force_pos.size() * 3, 18, VCT_COL_MAJOR);
-		Matrix_f_tem.SetAll(0);
+        Matrix_f_tem.SetAll(0);
 
         for (int i = 0; i < force_pos.size(); i++) {
             Matrix_f_tem[3 * i][0] = force_pos[i][0];
@@ -217,58 +217,58 @@ public:
         Matrix_f = Matrix_f_tem;
     }
 
-	void Calibration_cal()
+    void Calibration_cal()
         {
-			vctDynamicVector<double> S_tem(force_pos.size() * 3);
-			S_tem.SetAll(0);
+            vctDynamicVector<double> S_tem(force_pos.size() * 3);
+            S_tem.SetAll(0);
 
             for (int i = 0; i < force_pos.size(); i++) {
                 S_tem[3 * i] = S_raw[i][0];
                 S_tem[3 * i + 1] = S_raw[i][1];
                 S_tem[3 * i + 2] = S_raw[i][2];
             }
-			S = S_tem;
+            S = S_tem;
 
             vctDynamicMatrix<double> Matrix_f_copy;  //nmrLSqLin alters the content of Matrix_f and S
             Matrix_f_copy = Matrix_f;
             vctDynamicVector<double> S_copy;
-			S_copy = S;
-			vctDynamicVector<double> Vector_a_copy(18);
+            S_copy = S;
+            vctDynamicVector<double> Vector_a_copy(18);
             nmrLSqLin(Matrix_f_copy, S_copy, Vector_a_copy);
 
-			Vector_a = Vector_a_copy;
+            Vector_a = Vector_a_copy;
 
-			std::cout << Vector_a << std::endl;
+            std::cout << Vector_a << std::endl;
 
 //			vctDynamicMatrix<double> Matrix_f_copy_inverse;
 //			nmrPInverse(Matrix_f_copy, Matrix_f_copy_inverse);
 //			Vector_a = Matrix_f_copy_inverse*S_copy;
         }
 
-	void Serialization(const std::string &filename)
+    void Serialization(const std::string &filename)
         {
             std::ofstream jsonStream;
             Json::Value jsonConfig;
             Json::StyledWriter jsonWriter;
 
-			vctDynamicMatrix<double> Matrix_a(3, 6);
-			for (int j = 0; j < 3; j++) {
-				for (int k = 0; k < 6; k++) {
-					Matrix_a[j][k] = Vector_a[j * 6 + k];
-				}
-			}
+            vctDynamicMatrix<double> Matrix_a(3, 6);
+            for (int j = 0; j < 3; j++) {
+                for (int k = 0; k < 6; k++) {
+                    Matrix_a[j][k] = Vector_a[j * 6 + k];
+                }
+            }
 
-			Json::Value Matrix_cal, Force_Pos, Sensorreading;
+            Json::Value Matrix_cal, Force_Pos, Sensorreading;
             cmnDataJSON<vctDynamicMatrix<double>>::SerializeText(Matrix_a, Matrix_cal);
-			cmnDataJSON<std::vector<vctDouble6>>::SerializeText(force_pos, Force_Pos);
-			cmnDataJSON<std::vector<vctDouble3>>::SerializeText(S_raw, Sensorreading);
-			jsonConfig["cal-matrix"] = Matrix_cal;
-			jsonConfig["force-pos"] = Force_Pos;
-			jsonConfig["raw-sensor-reading"] = Sensorreading;
+            cmnDataJSON<std::vector<vctDouble6>>::SerializeText(force_pos, Force_Pos);
+            cmnDataJSON<std::vector<vctDouble3>>::SerializeText(S_raw, Sensorreading);
+            jsonConfig["cal-matrix"] = Matrix_cal;
+            jsonConfig["force-pos"] = Force_Pos;
+            jsonConfig["raw-sensor-reading"] = Sensorreading;
 
-			jsonStream.open(filename);
-			jsonStream << jsonWriter.write(jsonConfig) << std::endl;
-			jsonStream.close();
+            jsonStream.open(filename);
+            jsonStream << jsonWriter.write(jsonConfig) << std::endl;
+            jsonStream.close();
         }
 
     void PrintMenu(){
@@ -291,7 +291,7 @@ public:
             case '2':   // Measurements with input weight
                 GetSensorReading();
                 std::cout << "Sensor readings = " << S_raw.back()[0] << " " << S_raw.back()[1] << " "
-					<< S_raw.back()[2] << std::endl;
+                    << S_raw.back()[2] << std::endl;
                 std::cout << "Please remove the weight from the sensor" << std::endl;
                 UnZero();
                 PrintMenu();
@@ -340,9 +340,9 @@ int main(int argc, char **argv)
     mtsComponentManager * componentManager = mtsComponentManager::GetInstance();
     componentManager->AddComponent(opto);
 
-	opto->SensorCalibConfig();
+    opto->SensorCalibConfig();
 
-	SensorCalibration client;
+    SensorCalibration client;
     componentManager->AddComponent(&client);
 
     if (!componentManager->Connect(client.GetName(), "Input", opto->GetName(), "Force")) {

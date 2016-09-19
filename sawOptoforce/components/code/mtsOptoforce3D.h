@@ -40,7 +40,7 @@ class CISST_EXPORT mtsOptoforce3D: public mtsTaskContinuous {
     mtsOptoforce3D(const std::string &name, const std::string &portName);
     ~mtsOptoforce3D(void) {};
     void Configure(const std::string &filename = "");
-	void SensorCalibConfig(void);
+    void SensorCalibConfig(void);
     void Startup(void);
     void Run(void);
     void Cleanup(void);
@@ -50,8 +50,8 @@ class CISST_EXPORT mtsOptoforce3D: public mtsTaskContinuous {
     unsigned short Status;    // Force sensor status
     vctDouble3 RawSensor;     // Raw sensor readings (not calibrated)
     vctDouble3 Force;         // Force values (x, y, z)
-	vctDouble3 ForceCurrent;
-	vctDouble3 ForcePrevious;
+    vctDouble3 ForceCurrent;
+    vctDouble3 ForcePrevious;
     vctDouble3 Length;        // offset vector to where force is resolved
     prmForceCartesianGet ForceTorque;  // Force/torque (torque is 0)
 
@@ -61,7 +61,7 @@ class CISST_EXPORT mtsOptoforce3D: public mtsTaskContinuous {
     vctDouble6x3 matrix_l;    // matrix used to store lengths (L)
     vctDouble3x3 matrix_cal;  // final calibration matrix, inv(A*L)
     bool matrix_a_valid;      // Whether matrix_a is valid
-	bool calib_valid;
+    bool calib_valid;
 
     // shadow variables for sensor speed and filter
     unsigned char sensorSpeed;
