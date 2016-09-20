@@ -68,6 +68,8 @@ class CISST_EXPORT mtsOptoforce3D: public mtsTaskContinuous {
     void SendCommand(unsigned char speed, unsigned char filter, unsigned char zero);
     void GetSensorConfig(vctUChar3 &parms) const;  // Get speed, filter, and bias (returns shadow copies)
     void SetSensorConfig(const vctUChar3 &parms);  // Set speed, filter, and bias (sends command to sensor)
+    void IsCalibrated(bool &flag) const;           // Returns whether sensor is calibrated (matrix_a_valid)
+    void Uncalibrate(void);                        // Removes user calibration
     void Rebias(void);        // Bias force sensor (sends command to sensor)
     void Unbias(void);        // Remove previous bias (sends command to sensor)
     void GetBias(vctDouble3 &b) const;      // Current software bias

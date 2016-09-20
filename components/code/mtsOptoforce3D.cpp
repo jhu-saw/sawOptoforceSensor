@@ -29,14 +29,15 @@ http://www.cisst.org/cisst/license.txt.
 
 CMN_IMPLEMENT_SERVICES_DERIVED(mtsOptoforce3D, mtsTaskContinuous);
 
-mtsOptoforce3D::mtsOptoforce3D(const std::string &name, unsigned int port) : mtsTaskContinuous(name), 
+mtsOptoforce3D::mtsOptoforce3D(const std::string &name, unsigned int port) : mtsTaskContinuous(name),
                                                                              Length(0.0),
                                                                              bias(0.0), scale(1.0),
                                                                              matrix_a_valid(false),
                                                                              sensorSpeed(10),  // 100 Hz
                                                                              sensorFilter(4),  // 15 Hz
                                                                              sensorBias(0),    // unbias
-                                                                             configured(false), connected(false)
+                                                                             configured(false),
+                                                                             connected(false)
 {
     serialPort.SetPortNumber(port);
     Init();
@@ -49,7 +50,8 @@ mtsOptoforce3D::mtsOptoforce3D(const std::string &name, const std::string &portN
                                                                                        sensorSpeed(10),  // 100 Hz
                                                                                        sensorFilter(4),  // 15 Hz
                                                                                        sensorBias(0),    // unbias
-                                                                                       configured(false), connected(false)
+                                                                                       configured(false),
+                                                                                       connected(false)
 {
     serialPort.SetPortName(portName);
     Init();
@@ -75,6 +77,8 @@ void mtsOptoforce3D::Init(void)
         interfaceProvided->AddCommandReadState(StateTable, StateTable.Period, "GetTaskPeriod");
         interfaceProvided->AddCommandRead(&mtsOptoforce3D::GetSensorConfig, this, "GetSensorConfig");
         interfaceProvided->AddCommandWrite(&mtsOptoforce3D::SetSensorConfig, this, "SetSensorConfig");
+        interfaceProvided->AddCommandRead(&mtsOptoforce3D::IsCalibrated, this, "IsCalibrated");
+        interfaceProvided->AddCommandVoid(&mtsOptoforce3D::Uncalibrate, this, "Uncalibrate");
         interfaceProvided->AddCommandVoid(&mtsOptoforce3D::Rebias, this, "Rebias");
         interfaceProvided->AddCommandVoid(&mtsOptoforce3D::Unbias, this, "Unbias");
         interfaceProvided->AddCommandRead(&mtsOptoforce3D::GetBias, this, "GetBias");
@@ -129,20 +133,20 @@ void mtsOptoforce3D::Configure(const std::string &filename)
         const Json::Value jsonSpeed = jsonConfig["speed"];
         if (jsonSpeed.isNull()) {
             CMN_LOG_CLASS_INIT_VERBOSE << "Configure: \"speed\" (update rate from sensor) not specified,"
-                                       << " using default value of " << sensorSpeed << std::endl;
+                                       << " using default value of " << (unsigned int)sensorSpeed << std::endl;
         } else {
             sensorSpeed = static_cast<unsigned char>(jsonSpeed.asUInt());
             CMN_LOG_CLASS_INIT_VERBOSE << "Configure: parsed speed (update rate from sensor) = "
-                                       << sensorSpeed << std::endl;
+                                       << (unsigned int)sensorSpeed << std::endl;
         }
         const Json::Value jsonFilter = jsonConfig["filter"];
         if (jsonFilter.isNull()) {
             CMN_LOG_CLASS_INIT_VERBOSE << "Configure: \"filter\" (cutoff frequency) not specified,"
-                                       << " using default value of " << sensorFilter << std::endl;
+                                       << " using default value of " << (unsigned int)sensorFilter << std::endl;
         } else {
             sensorFilter = static_cast<unsigned char>(jsonFilter.asUInt());
             CMN_LOG_CLASS_INIT_VERBOSE << "Configure: parsed filter (cutoff frequency) = "
-                                       << sensorFilter << std::endl;
+                                       << (unsigned int)sensorFilter << std::endl;
         }
         const Json::Value jsonCalMatrix = jsonConfig["cal-matrix"];
         if (jsonCalMatrix.isNull()) {
@@ -280,7 +284,7 @@ void mtsOptoforce3D::Run(void)
                 Force = RawSensor - bias;
             }
             ForceTorque.SetForce(vctDouble6(Force.X(), Force.Y(), Force.Z(), 0.0, 0.0, 0.0));
-        }  
+        }
     }
     else {
         ForceTorque.SetValid(false);
@@ -348,6 +352,16 @@ void mtsOptoforce3D::GetSensorConfig(vctUChar3 &parms) const
     parms.X() = sensorSpeed;
     parms.Y() = sensorFilter;
     parms.Z() = sensorBias;
+}
+
+void mtsOptoforce3D::IsCalibrated(bool &flag) const
+{
+    flag = matrix_a_valid;
+}
+
+void mtsOptoforce3D::Uncalibrate(void)
+{
+    matrix_a_valid = false;
 }
 
 // Note that two consecutive calls to Rebias will not work;
@@ -419,4 +433,5 @@ void mtsOptoforce3D::GetScale(vctDouble3 &s) const
 void mtsOptoforce3D::SetScale(const vctDouble3 &s)
 {
     scale = s;
+    configured = true;
 }
