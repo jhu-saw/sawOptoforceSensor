@@ -54,7 +54,7 @@ private:
 
 protected:
     std::vector<vctDouble6> force_pos;    // The vector contains information of applied force and its location
-    std::vector<vctDouble3> S_raw, F_nominal;        // The vector containing all raw sensor readings
+    std::vector<vctDouble3> S_raw;        // The vector containing all raw sensor readings
     vctDouble3x6 Matrix_a;                // The calibration result
     double RMSE_err;                          // The RMSE error
 
