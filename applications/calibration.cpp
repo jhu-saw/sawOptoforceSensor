@@ -13,11 +13,13 @@ http://www.cisst.org/cisst/license.txt.
 --- end cisst license ---
 */
 
+#include <cmath>
 #include <cisstConfig.h>
 #include <cisstCommon/cmnLogger.h>
 #include <cisstCommon/cmnKbHit.h>
 #include <cisstCommon/cmnGetChar.h>
 #include <cisstOSAbstraction/osaSleep.h>
+#include <cisstNumerical/nmrGaussJordanInverse.h>
 #if CISST_HAS_JSON
 #include <cisstVector/vctDataFunctionsFixedSizeVectorJSON.h>
 #include <cisstVector/vctDataFunctionsFixedSizeMatrixJSON.h>
@@ -52,8 +54,9 @@ private:
 
 protected:
     std::vector<vctDouble6> force_pos;    // The vector contains information of applied force and its location
-    std::vector<vctDouble3> S_raw;        // The vector containing all raw sensor readings
+    std::vector<vctDouble3> S_raw, F_nominal;        // The vector containing all raw sensor readings
     vctDouble3x6 Matrix_a;                // The calibration result
+    double RMSE_err;                          // The RMSE error
 
 public:
 
@@ -229,12 +232,57 @@ public:
 
     // Compute the residual error for the current calibration matrix and recorded data,
     // given by (F - inv(A*L)*S)
-    //    F is the applied force (force_pos[0], force_pos[1], force_pos[2])
+    //    F is the applied force (force_pos[i][0], force_pos[i][1], force_pos[i][2])
     //    A is the computed calibration matrix (Matrix_a)
-    //    L is the matrix formed from the lengths (force_pos[3], force_pos[4], force_pos[5])
+    //    L is the matrix formed from the lengths (force_pos[i][3], force_pos[i][4], force_pos[i][5])
     //    S is the sensor readings (S_raw)
     void ComputeResidual()
     {
+        double MSE = 0;     // Mean square error
+        double SE = 0;      // Square error
+
+        // Compute the nominal forces 
+        for (size_t i = 0; i < force_pos.size(); i++) {
+            vctDouble3 F_computed;
+            vctDouble3 F_raw;
+            F_raw[0] = force_pos[i][0];
+            F_raw[1] = force_pos[i][1];
+            F_raw[2] = force_pos[i][2];
+
+            vctDouble6x3 Matrix_L;
+            Matrix_L.SetAll(0);
+            Matrix_L[0][0] = 1;
+            Matrix_L[1][1] = 1;
+            Matrix_L[2][2] = 1;
+            Matrix_L[3][1] = force_pos[i][5];
+            Matrix_L[3][2] = -force_pos[i][4];
+            Matrix_L[4][0] = -force_pos[i][5];
+            Matrix_L[4][2] = force_pos[i][3];
+            Matrix_L[5][0] = force_pos[i][4];
+            Matrix_L[5][1] = -force_pos[i][3];
+
+            // Now, compute inverse of A*L
+            vctDouble3x3 matrix_product = Matrix_a*Matrix_L;
+            vctDouble3x3 matrix_product_inverse;
+            bool cal_valid;
+
+            nmrGaussJordanInverse3x3(matrix_product, cal_valid, matrix_product_inverse, 0.0);
+
+            if (cal_valid) {
+                F_computed = matrix_product_inverse*S_raw[i];   // if nonsingular, update class member matrix_cal
+            }
+            else
+                CMN_LOG_CLASS_RUN_WARNING << "Calibration matrix is singular" << std::endl;
+
+            // Compute the sum of square error
+            vctDouble3 diff;
+            std::cout << diff << std::endl;
+            diff = F_raw - F_computed; 
+            SE += pow(diff.Norm(), 2);
+        }
+        // Compute RMSE error
+        MSE = SE / force_pos.size();
+        RMSE_err = sqrt(MSE);
     }
 
     void Serialization(const std::string &filename)
@@ -244,13 +292,15 @@ public:
         Json::Value jsonConfig;
         Json::StyledWriter jsonWriter;
 
-        Json::Value Matrix_cal, Force_Pos, SensorReading;
+        Json::Value Matrix_cal, Force_Pos, SensorReading, RMSE_error;
         cmnDataJSON<vctFixedSizeMatrix<double, 3, 6> >::SerializeText(Matrix_a, Matrix_cal);
         cmnDataJSON<std::vector<vctDouble6> >::SerializeText(force_pos, Force_Pos);
         cmnDataJSON<std::vector<vctDouble3> >::SerializeText(S_raw, SensorReading);
+        cmnDataJSON<double>::SerializeText(RMSE_err, RMSE_error);
         jsonConfig["cal-matrix"] = Matrix_cal;
         jsonConfig["force-pos"] = Force_Pos;
         jsonConfig["raw-sensor-reading"] = SensorReading;
+        jsonConfig["RMSE-error"] = RMSE_error;
 
         jsonStream.open(filename.c_str());
         jsonStream << jsonWriter.write(jsonConfig) << std::endl;
