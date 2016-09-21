@@ -102,6 +102,7 @@ public:
                   << "5) Exit" << std::endl
                   << "Select Option: " << std::endl;
 
+        std::string outputFile;
         char c = cmnGetChar();
         switch (c) {
             case '1':   // Input length and applied force
@@ -124,9 +125,12 @@ public:
                 std::cout << "The number of groups of measurements you used to calculate calibration matrix = "
                           << force_pos.size() << std::endl;
                 ComputeCalibration();
+                ComputeResidual();
                 break;
             case '4':   // Write results to a json file
-                Serialization("output.json");
+                std::cout << "Please specify file name (no extension): ";
+                std::cin >> outputFile;
+                Serialization(outputFile+".json");
                 break;
             case '5':   // quit program
                 std::cout << "Exiting.. " << std::endl;
@@ -163,7 +167,7 @@ public:
                 std::cout << "Invalid force -- check connection and try again" << std::endl;
                 return false;
             }
-            osaSleep(0.1);
+            osaSleep(0.05);
         }
         b.Divide(50);
         S_raw.push_back(b);
@@ -212,7 +216,7 @@ public:
 
         // nmrLSqLin alters the contents of Matrix_f and S, so it would be necessary to make
         // a copy if we wish to preserve their contents (in this case, it is not necessary).
-        vctDynamicVector<double> Vector_a;
+        vctDynamicVector<double> Vector_a(18);
         nmrLSqLin(Matrix_f, S, Vector_a);
 
         // Now, copy the elements of Vector_a into the matrix.
@@ -221,6 +225,16 @@ public:
                 Matrix_a[j][k] = Vector_a[j * 6 + k];
             }
         }
+    }
+
+    // Compute the residual error for the current calibration matrix and recorded data,
+    // given by (F - inv(A*L)*S)
+    //    F is the applied force (force_pos[0], force_pos[1], force_pos[2])
+    //    A is the computed calibration matrix (Matrix_a)
+    //    L is the matrix formed from the lengths (force_pos[3], force_pos[4], force_pos[5])
+    //    S is the sensor readings (S_raw)
+    void ComputeResidual()
+    {
     }
 
     void Serialization(const std::string &filename)
@@ -258,6 +272,12 @@ int main(int argc, char **argv)
     cmnLogger::SetMaskClass("mtsOptoforce3D", CMN_LOG_ALLOW_ALL);
     cmnLogger::AddChannel(std::cout, CMN_LOG_ALLOW_ERRORS_AND_WARNINGS);
     
+    if (argc < 3) {
+        std::cerr << "Syntax: OptoforceCalib <port> <json-cfg>" << std::endl;
+        std::cerr << "        <port>      port number (>=1) or port name" << std::endl;
+        std::cerr << "        <json-cfg>  configuration file (JSON format)" << std::endl;
+    }
+
     mtsOptoforce3D *opto;
     int portNum;
     if (sscanf(argv[1], "%d", &portNum) == 1) {
@@ -271,6 +291,7 @@ int main(int argc, char **argv)
 
     mtsComponentManager * componentManager = mtsComponentManager::GetInstance();
     componentManager->AddComponent(opto);
+    opto->Configure(argv[2]);
 
     SensorCalibration client;
     componentManager->AddComponent(&client);
