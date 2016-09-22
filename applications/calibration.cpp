@@ -129,6 +129,7 @@ public:
                           << force_pos.size() << std::endl;
                 ComputeCalibration();
                 ComputeResidual();
+                std::cout << "RMS Error = " << RMSE_err << std::endl;
                 break;
             case '4':   // Write results to a json file
                 std::cout << "Please specify file name (no extension): ";
@@ -240,8 +241,15 @@ public:
     {
         double MSE = 0;     // Mean square error
         double SE = 0;      // Square error
+        int numValid = 0;
 
         // Compute the nominal forces 
+        vctDouble6x3 Matrix_L;
+        Matrix_L.SetAll(0);
+        Matrix_L[0][0] = 1;
+        Matrix_L[1][1] = 1;
+        Matrix_L[2][2] = 1;
+        std::cout << "Force differences:" << std::endl;
         for (size_t i = 0; i < force_pos.size(); i++) {
             vctDouble3 F_computed;
             vctDouble3 F_raw;
@@ -249,11 +257,6 @@ public:
             F_raw[1] = force_pos[i][1];
             F_raw[2] = force_pos[i][2];
 
-            vctDouble6x3 Matrix_L;
-            Matrix_L.SetAll(0);
-            Matrix_L[0][0] = 1;
-            Matrix_L[1][1] = 1;
-            Matrix_L[2][2] = 1;
             Matrix_L[3][1] = force_pos[i][5];
             Matrix_L[3][2] = -force_pos[i][4];
             Matrix_L[4][0] = -force_pos[i][5];
@@ -269,19 +272,19 @@ public:
             nmrGaussJordanInverse3x3(matrix_product, cal_valid, matrix_product_inverse, 0.0);
 
             if (cal_valid) {
-                F_computed = matrix_product_inverse*S_raw[i];   // if nonsingular, update class member matrix_cal
+                F_computed = matrix_product_inverse*S_raw[i];
+                // Compute the sum of square error
+                vctDouble3 diff(F_raw - F_computed);
+                std::cout << "  " << diff << std::endl;
+                SE += diff.NormSquare();
+                numValid++;
             }
             else
-                CMN_LOG_CLASS_RUN_WARNING << "Calibration matrix is singular" << std::endl;
+                std::cout << "  Calibration matrix is singular" << std::endl;
 
-            // Compute the sum of square error
-            vctDouble3 diff;
-            std::cout << diff << std::endl;
-            diff = F_raw - F_computed; 
-            SE += pow(diff.Norm(), 2);
         }
         // Compute RMSE error
-        MSE = SE / force_pos.size();
+        MSE = SE / numValid;
         RMSE_err = sqrt(MSE);
     }
 
