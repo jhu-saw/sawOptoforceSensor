@@ -249,7 +249,6 @@ public:
         Matrix_L[0][0] = 1;
         Matrix_L[1][1] = 1;
         Matrix_L[2][2] = 1;
-        std::cout << "Force differences:" << std::endl;
         for (size_t i = 0; i < force_pos.size(); i++) {
             vctDouble3 F_computed;
             vctDouble3 F_raw;
@@ -275,12 +274,11 @@ public:
                 F_computed = matrix_product_inverse*S_raw[i];
                 // Compute the sum of square error
                 vctDouble3 diff(F_raw - F_computed);
-                std::cout << "  " << diff << std::endl;
                 SE += diff.NormSquare();
                 numValid++;
             }
             else
-                std::cout << "  Calibration matrix is singular" << std::endl;
+                CMN_LOG_CLASS_RUN_WARNING << "Calibration matrix is singular" << std::endl;
 
         }
         // Compute RMSE error
