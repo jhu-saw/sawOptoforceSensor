@@ -56,11 +56,11 @@ protected:
     std::vector<vctDouble6> force_pos;    // The vector contains information of applied force and its location
     std::vector<vctDouble3> S_raw;        // The vector containing all raw sensor readings
     vctDouble3x6 Matrix_a;                // The calibration result
-    double RMSE_err;                          // The RMSE error
+    double RMSE_err;                      // The RMSE error
 
 public:
 
-    SensorCalibration() : mtsTaskMain("SensorCalibration")
+    SensorCalibration() : mtsTaskMain("SensorCalibration"), RMSE_err(0.0)
     {
         mtsInterfaceRequired *req = AddInterfaceRequired("Input", MTS_OPTIONAL);
         if (req) {
@@ -82,6 +82,12 @@ public:
             req->AddFunction("GetScale", GetScale);
             req->AddFunction("SetScale", SetScale);
         }
+        // Initialize Matrix_a to a reasonable value, i.e., so that A*L is the
+        // identity when the length is (0, 0, 0).
+        Matrix_a.SetAll(0.0);
+        Matrix_a[0][0] = 1.0;
+        Matrix_a[1][1] = 1.0;
+        Matrix_a[2][2] = 1.0;
     }
 
     void Configure(const std::string&) {}
