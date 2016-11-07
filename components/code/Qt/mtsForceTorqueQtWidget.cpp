@@ -32,35 +32,35 @@ http://www.cisst.org/cisst/license.txt.
 #include <cisstMultiTask/mtsInterfaceRequired.h>
 #include <sawOptoforceSensor/mtsForceTorqueQtWidget.h>
 
-CMN_IMPLEMENT_SERVICES_DERIVED_ONEARG(mtsATINetFTQtWidget, mtsComponent, std::string);
+CMN_IMPLEMENT_SERVICES_DERIVED_ONEARG(mtsForceTorqueQtWidget, mtsComponent, std::string);
 
-mtsATINetFTQtWidget::mtsATINetFTQtWidget(const std::string & componentName, double periodInSeconds):
+mtsForceTorqueQtWidget::mtsForceTorqueQtWidget(const std::string & componentName, double periodInSeconds):
     mtsComponent(componentName),
     PlotIndex(0),
     TimerPeriodInMilliseconds(periodInSeconds) // Qt timers are in milliseconds
 {
     // Setup CISST Interface
     mtsInterfaceRequired * interfaceRequired;
-    interfaceRequired = AddInterfaceRequired("RequiresATINetFTSensor");
+    interfaceRequired = AddInterfaceRequired("RequiresForceTorqueSensor");
     if(interfaceRequired) {
-        interfaceRequired->AddFunction("GetFTData"          , ForceSensor.GetFTData);
-        interfaceRequired->AddFunction("Rebias"             , ForceSensor.RebiasForceTorque);
-        interfaceRequired->AddFunction("GetPeriodStatistics", ForceSensor.GetPeriodStatistics);
-        interfaceRequired->AddFunction("GetIsConnected"     , ForceSensor.GetIsConnected);
-        interfaceRequired->AddFunction("GetIsSaturated"     , ForceSensor.GetIsSaturated);
-        interfaceRequired->AddFunction("GetHasError"        , ForceSensor.GetHasError);
+        // interfaceRequired->AddFunction("GetFTData"          , ForceSensor.GetFTData);
+        // interfaceRequired->AddFunction("Rebias"             , ForceSensor.RebiasForceTorque);
+         interfaceRequired->AddFunction("GetPeriodStatistics", ForceSensor.GetPeriodStatistics);
+        // interfaceRequired->AddFunction("GetIsConnected"     , ForceSensor.GetIsConnected);
+        // interfaceRequired->AddFunction("GetIsSaturated"     , ForceSensor.GetIsSaturated);
+        //interfaceRequired->AddFunction("GetHasError"        , ForceSensor.GetHasError);
     }
 
     setupUi();
     startTimer(TimerPeriodInMilliseconds);
 }
 
-void mtsATINetFTQtWidget::Configure(const std::string &filename)
+void mtsForceTorqueQtWidget::Configure(const std::string &filename)
 {
     CMN_LOG_CLASS_INIT_VERBOSE << "Configure: " << filename << std::endl;
 }
 
-void mtsATINetFTQtWidget::Startup(void)
+void mtsForceTorqueQtWidget::Startup(void)
 {
     CMN_LOG_CLASS_INIT_VERBOSE << "Startup" << std::endl;
     if (!parent()) {
@@ -68,15 +68,15 @@ void mtsATINetFTQtWidget::Startup(void)
     }
 }
 
-void mtsATINetFTQtWidget::Cleanup(void)
+void mtsForceTorqueQtWidget::Cleanup(void)
 {
     this->hide();
     CMN_LOG_CLASS_INIT_VERBOSE << "Cleanup" << std::endl;
 }
 
-void mtsATINetFTQtWidget::closeEvent(QCloseEvent * event)
+void mtsForceTorqueQtWidget::closeEvent(QCloseEvent * event)
 {
-    int answer = QMessageBox::warning(this, tr("mtsATINetFTQtWidget"),
+    int answer = QMessageBox::warning(this, tr("mtsForceTorqueQtWidget"),
                                       tr("Do you really want to quit this application?"),
                                       QMessageBox::No | QMessageBox::Yes);
     if (answer == QMessageBox::Yes) {
@@ -87,7 +87,7 @@ void mtsATINetFTQtWidget::closeEvent(QCloseEvent * event)
     }
 }
 
-void mtsATINetFTQtWidget::setupUi()
+void mtsForceTorqueQtWidget::setupUi()
 {
     QFont font;
     font.setBold(true);
@@ -146,18 +146,18 @@ void mtsATINetFTQtWidget::setupUi()
     QHBoxLayout * errorLayout = new QHBoxLayout;
     QLabel *errorLabel = new QLabel("Info");
 
-    ErrorMsg = new QLineEdit("No Error");
-    ErrorMsg->setFont(QFont("lucida", 12, QFont::Bold, true));
-    ErrorMsg->setStyleSheet("QLineEdit {background-color: green }");
+    //ErrorMsg = new QLineEdit("No Error");
+    //ErrorMsg->setFont(QFont("lucida", 12, QFont::Bold, true));
+    //ErrorMsg->setStyleSheet("QLineEdit {background-color: green }");
 
     errorLayout->addWidget(errorLabel);
-    errorLayout->addWidget(ErrorMsg);
-    errorLayout->addStretch();
+    //    errorLayout->addWidget(ErrorMsg);
+    //    errorLayout->addStretch();
 
     // Layout containing rebias button
     QHBoxLayout * buttonLayout = new QHBoxLayout;
-    RebiasButton = new QPushButton("Rebias");
-    buttonLayout->addWidget(RebiasButton);
+    //RebiasButton = new QPushButton("Rebias");
+    //    buttonLayout->addWidget(RebiasButton);
     buttonLayout->addStretch();
 
     // Tab1 layout order
@@ -193,14 +193,14 @@ void mtsATINetFTQtWidget::setupUi()
     resize(sizeHint());
 
     // setup Qt Connection
-    connect(RebiasButton, SIGNAL(clicked()), this, SLOT(SlotRebiasFTSensor()));
+    //    connect(RebiasButton, SIGNAL(clicked()), this, SLOT(SlotRebiasFTSensor()));
     connect(QPlotSelectItem, SIGNAL(currentIndexChanged(int)), this, SLOT(SlotPlotIndex(int)));
 
     QPlotSelectItem->setCurrentIndex(FNorm);
-    RebiasButton->animateClick();
+    //    RebiasButton->animateClick();
 }
 
-void mtsATINetFTQtWidget::SetupSensorPlot()
+void mtsForceTorqueQtWidget::SetupSensorPlot()
 {
     // Plot to show force/torque graph
     QFTPlot = new vctPlot2DOpenGLQtWidget();
@@ -232,46 +232,46 @@ void mtsATINetFTQtWidget::SetupSensorPlot()
     FNormSignal->SetVisible(false);
 }
 
-void mtsATINetFTQtWidget::timerEvent(QTimerEvent * event)
+void mtsForceTorqueQtWidget::timerEvent(QTimerEvent * event)
 {
     // make sure we should update the display
     if (this->isHidden()) {
         return;
     }
     mtsExecutionResult executionResult;
-    executionResult = ForceSensor.GetFTData(ForceSensor.FTReadings);
+    //    executionResult = ForceSensor.GetFTData(ForceSensor.FTReadings);
     if (!executionResult) {
         CMN_LOG_CLASS_RUN_ERROR << "ForceSensor.GetFTData failed, \""
                                 << executionResult << "\"" << std::endl;
     }
 
-    QFTSensorValues->SetValue(ForceSensor.FTReadings);
+    //QFTSensorValues->SetValue(ForceSensor.FTReadings);
 
     // Uppdate the plot
     vctDoubleVec forceOnly(3, 0.0), torqueOnly(3, 0.0);
-    forceOnly.Assign(ForceSensor.FTReadings, 3);
-    torqueOnly.Assign(ForceSensor.FTReadings, 3, 0, 3);
+    //forceOnly.Assign(ForceSensor.FTReadings, 3);
+    //torqueOnly.Assign(ForceSensor.FTReadings, 3, 0, 3);
     ForceSensor.GetPeriodStatistics(IntervalStatistics);
     QMIntervalStatistics->SetValue(IntervalStatistics);
 
-    if(PlotIndex ==  Fx || PlotIndex ==  Fy || PlotIndex ==  Fz)           // Fx,Fy or Fz
-        ForceSignal[PlotIndex]->AppendPoint(vctDouble2(ForceSensor.FTReadings.Timestamp(),
-                                                       forceOnly.Element(PlotIndex)));
-    else if(PlotIndex == Fxyz) {        // Fx, Fy & Fz
-        for (int i = 0; i < 3; ++i) {
-            ForceSignal[i]->AppendPoint(vctDouble2(ForceSensor.FTReadings.Timestamp(),
-                                                   forceOnly.Element(i)));
-        }
+    if(PlotIndex ==  Fx || PlotIndex ==  Fy || PlotIndex ==  Fz){           // Fx,Fy or Fz
+        //  ForceSignal[PlotIndex]->AppendPoint(vctDouble2(ForceSensor.FTReadings.Timestamp(),
+        //                                             forceOnly.Element(PlotIndex)));
+        //    else if(PlotIndex == Fxyz) {        // Fx, Fy & Fz
+        //for (int i = 0; i < 3; ++i) {
+            //  ForceSignal[i]->AppendPoint(vctDouble2(ForceSensor.FTReadings.Timestamp(),
+            //                                     forceOnly.Element(i)));
+        //}
     }
-    else if(PlotIndex == FNorm)     // Norm(Force)
-        FNormSignal->AppendPoint(vctDouble2(ForceSensor.FTReadings.Timestamp(),
-                                            forceOnly.Norm()));
+    else if(PlotIndex == FNorm){     // Norm(Force)
+        //FNormSignal->AppendPoint(vctDouble2(ForceSensor.FTReadings.Timestamp(),
+        //                                  forceOnly.Norm()));
 
-    else if(PlotIndex == Txyz) {     // Tx, Ty & Tz
-        for (int i = 0; i < 3; ++i) {
-            TorqueSignal[i]->AppendPoint(vctDouble2(ForceSensor.FTReadings.Timestamp(),
-                                                    torqueOnly.Element(i)));
-        }
+        //else if(PlotIndex == Txyz) {     // Tx, Ty & Tz
+        //for (int i = 0; i < 3; ++i) {
+            //  TorqueSignal[i]->AppendPoint(vctDouble2(ForceSensor.FTReadings.Timestamp(),
+            //                                      torqueOnly.Element(i)));
+        //}
     }
 
     // Update the lower/upper limits on the plot
@@ -288,10 +288,11 @@ void mtsATINetFTQtWidget::timerEvent(QTimerEvent * event)
     UpperLimit->setText(text);
 
     // Update error state
-    ForceSensor.GetIsConnected(ForceSensor.IsConnected);
-    ForceSensor.GetIsSaturated(ForceSensor.IsSaturated);
-    ForceSensor.GetHasError(ForceSensor.HasError);
- 
+    //ForceSensor.GetIsConnected(ForceSensor.IsConnected);
+    //ForceSensor.GetIsSaturated(ForceSensor.IsSaturated);
+    //ForceSensor.GetHasError(ForceSensor.HasError);
+
+    /**
     if(!ForceSensor.IsConnected) {
         ErrorMsg->setText(QString("Not Connected"));
         ErrorMsg->setStyleSheet("QLineEdit {background-color: red }");
@@ -304,17 +305,19 @@ void mtsATINetFTQtWidget::timerEvent(QTimerEvent * event)
     } else {
         ErrorMsg->setText(QString("Connected : No Error"));
         ErrorMsg->setStyleSheet("QLineEdit {background-color:green }");
-    }
+        }*/
 
     QFTPlot->updateGL();
 }
-
-void mtsATINetFTQtWidget::SlotRebiasFTSensor(void)
+/*
+void mtsForceTorqueQtWidget::SlotRebiasFTSensor(void)
 {
     ForceSensor.RebiasForceTorque();
 }
+*/
 
-void mtsATINetFTQtWidget::SlotPlotIndex(int newAxis)
+/*
+void mtsForceTorqueQtWidget::SlotPlotIndex(int newAxis)
 {    
     PlotIndex = newAxis;
     for (int i = 0; i < 5; ++i) {
@@ -339,3 +342,4 @@ void mtsATINetFTQtWidget::SlotPlotIndex(int newAxis)
     }
     QFTPlot->SetContinuousExpandYResetSlot();
 }
+*/

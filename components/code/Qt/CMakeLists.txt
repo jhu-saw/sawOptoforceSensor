@@ -36,7 +36,7 @@ if (cisst_FOUND_AS_REQUIRED)
   include_directories (${CMAKE_CURRENT_BINARY_DIR})
   if (CISST_HAS_QT4)
     qt4_wrap_cpp (SAW_ATINETFT_QT_WRAP_CPP
-                  ${sawOptoforceSensor_HEADER_DIR}/mtsATINetFTQtWidget.h
+                  ${sawOptoforceSensor_HEADER_DIR}/mtsForceTorqueQtWidget.h
                   )
   else (CISST_HAS_QT4)
     set (CMAKE_AUTOMOC ON)

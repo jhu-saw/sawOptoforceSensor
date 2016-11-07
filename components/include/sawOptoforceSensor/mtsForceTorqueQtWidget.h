@@ -16,8 +16,8 @@ http://www.cisst.org/cisst/license.txt.
 --- end cisst license ---
 */
 
-#ifndef _mtsATINetFTQtWidget_h
-#define _mtsATINetFTQtWidget_h
+#ifndef _mtsForceTorqueQtWidget_h
+#define _mtsForceTorqueQtWidget_h
 
 #include <cisstMultiTask/mtsComponent.h>
 #include <cisstMultiTask/mtsVector.h>
@@ -34,7 +34,7 @@ http://www.cisst.org/cisst/license.txt.
 // Always include last
 #include <sawOptoforceSensor/sawOptoforceSensorQtExport.h>
 
-class CISST_EXPORT mtsATINetFTQtWidget: public QWidget, public mtsComponent
+class CISST_EXPORT mtsForceTorqueQtWidget: public QWidget, public mtsComponent
 {
     Q_OBJECT;
     CMN_DECLARE_SERVICES(CMN_DYNAMIC_CREATION_ONEARG, CMN_LOG_ALLOW_ALL);
@@ -48,8 +48,8 @@ public:
         Fxyz = 4,
         Txyz = 5
     };
-    mtsATINetFTQtWidget(const std::string & componentName, double periodInSeconds = 50.0 * cmn_ms);
-    ~mtsATINetFTQtWidget(){}
+    mtsForceTorqueQtWidget(const std::string & componentName, double periodInSeconds = 50.0 * cmn_ms);
+    ~mtsForceTorqueQtWidget(){}
 
     void Configure(const std::string & filename = "");
     void Startup(void);
@@ -64,29 +64,29 @@ private:
 
 private:
     struct NetFTStruct {
-        mtsFunctionVoid RebiasForceTorque;
-        mtsFunctionRead GetFTData;        
+//        mtsFunctionVoid RebiasForceTorque;
+        mtsFunctionRead GetForceTorque;        
         mtsFunctionRead GetPeriodStatistics;
-        mtsFunctionRead GetIsConnected;
-        mtsFunctionRead GetIsSaturated;
-        mtsFunctionRead GetHasError;
+//        mtsFunctionRead GetIsConnected;
+//        mtsFunctionRead GetIsSaturated;
+//        mtsFunctionRead GetHasError;
 
-        mtsDoubleVec FTReadings;
-        bool IsConnected;
-        bool IsSaturated;
-        bool HasError;
+//       mtsDoubleVec FTReadings;
+//        bool IsConnected;
+//        bool IsSaturated;
+//        bool HasError;
     } ForceSensor;
 
-    mtsBool IsSaturated;
+//   mtsBool IsSaturated;
     vctQtWidgetDynamicVectorDoubleRead * QFTSensorValues;
 
-    QPushButton * RebiasButton;
-    QLabel * ConnectionStatus;
+//    QPushButton * RebiasButton;
+//    QLabel * ConnectionStatus;
 
     QLabel * UpperLimit;
     QLabel * LowerLimit;
 
-    QLineEdit * ErrorMsg;
+//    QLineEdit * ErrorMsg;
 
     vctPlot2DOpenGLQtWidget * QFTPlot;
     vctPlot2DBase::Signal * ForceSignal[3];
@@ -106,10 +106,10 @@ private:
 
 private slots:
     void timerEvent(QTimerEvent * event);
-    void SlotRebiasFTSensor(void);
-    void SlotPlotIndex(int newAxis);
+//    void SlotRebiasFTSensor(void);
+//    void SlotPlotIndex(int newAxis);
 };
 
-CMN_DECLARE_SERVICES_INSTANTIATION(mtsATINetFTQtWidget);
+CMN_DECLARE_SERVICES_INSTANTIATION(mtsForceTorqueQtWidget);
 
-#endif // _mtsATINetFTQtWidget_h
+#endif // _mtsForceTorqueQtWidget_h
