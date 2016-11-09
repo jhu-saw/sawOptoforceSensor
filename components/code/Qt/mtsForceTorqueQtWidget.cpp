@@ -43,13 +43,8 @@ mtsForceTorqueQtWidget::mtsForceTorqueQtWidget(const std::string & componentName
     mtsInterfaceRequired * interfaceRequired;
     interfaceRequired = AddInterfaceRequired("RequiresForceTorqueSensor");
     if(interfaceRequired) {
-        // interfaceRequired->AddFunction("GetFTData"          , ForceSensor.GetFTData);
-        // interfaceRequired->AddFunction("Rebias"             , ForceSensor.RebiasForceTorque);
          interfaceRequired->AddFunction("GetPeriodStatistics", ForceSensor.GetPeriodStatistics);
-        // interfaceRequired->AddFunction("GetIsConnected"     , ForceSensor.GetIsConnected);
-        // interfaceRequired->AddFunction("GetIsSaturated"     , ForceSensor.GetIsSaturated);
-        //interfaceRequired->AddFunction("GetHasError"        , ForceSensor.GetHasError);
-    }
+   }
 
     setupUi();
     startTimer(TimerPeriodInMilliseconds);
@@ -101,7 +96,6 @@ void mtsForceTorqueQtWidget::setupUi()
 
     // Spacers
     QSpacerItem * vSpacer = new QSpacerItem(40, 10, QSizePolicy::Expanding, QSizePolicy::Preferred);
-//    QSpacerItem * hSpacer = new QSpacerItem(10, 40, QSizePolicy::Expanding, QSizePolicy::Preferred);
 
     // Force/Torque display widgets and layouts
     QVBoxLayout * spinBoxLayout = new QVBoxLayout;
@@ -146,18 +140,9 @@ void mtsForceTorqueQtWidget::setupUi()
     QHBoxLayout * errorLayout = new QHBoxLayout;
     QLabel *errorLabel = new QLabel("Info");
 
-    //ErrorMsg = new QLineEdit("No Error");
-    //ErrorMsg->setFont(QFont("lucida", 12, QFont::Bold, true));
-    //ErrorMsg->setStyleSheet("QLineEdit {background-color: green }");
-
     errorLayout->addWidget(errorLabel);
-    //    errorLayout->addWidget(ErrorMsg);
-    //    errorLayout->addStretch();
-
     // Layout containing rebias button
     QHBoxLayout * buttonLayout = new QHBoxLayout;
-    //RebiasButton = new QPushButton("Rebias");
-    //    buttonLayout->addWidget(RebiasButton);
     buttonLayout->addStretch();
 
     // Tab1 layout order
@@ -193,11 +178,9 @@ void mtsForceTorqueQtWidget::setupUi()
     resize(sizeHint());
 
     // setup Qt Connection
-    //    connect(RebiasButton, SIGNAL(clicked()), this, SLOT(SlotRebiasFTSensor()));
     connect(QPlotSelectItem, SIGNAL(currentIndexChanged(int)), this, SLOT(SlotPlotIndex(int)));
 
     QPlotSelectItem->setCurrentIndex(FNorm);
-    //    RebiasButton->animateClick();
 }
 
 void mtsForceTorqueQtWidget::SetupSensorPlot()
@@ -239,40 +222,15 @@ void mtsForceTorqueQtWidget::timerEvent(QTimerEvent * event)
         return;
     }
     mtsExecutionResult executionResult;
-    //    executionResult = ForceSensor.GetFTData(ForceSensor.FTReadings);
     if (!executionResult) {
         CMN_LOG_CLASS_RUN_ERROR << "ForceSensor.GetFTData failed, \""
                                 << executionResult << "\"" << std::endl;
     }
 
-    //QFTSensorValues->SetValue(ForceSensor.FTReadings);
-
     // Uppdate the plot
     vctDoubleVec forceOnly(3, 0.0), torqueOnly(3, 0.0);
-    //forceOnly.Assign(ForceSensor.FTReadings, 3);
-    //torqueOnly.Assign(ForceSensor.FTReadings, 3, 0, 3);
     ForceSensor.GetPeriodStatistics(IntervalStatistics);
     QMIntervalStatistics->SetValue(IntervalStatistics);
-
-    if(PlotIndex ==  Fx || PlotIndex ==  Fy || PlotIndex ==  Fz){           // Fx,Fy or Fz
-        //  ForceSignal[PlotIndex]->AppendPoint(vctDouble2(ForceSensor.FTReadings.Timestamp(),
-        //                                             forceOnly.Element(PlotIndex)));
-        //    else if(PlotIndex == Fxyz) {        // Fx, Fy & Fz
-        //for (int i = 0; i < 3; ++i) {
-            //  ForceSignal[i]->AppendPoint(vctDouble2(ForceSensor.FTReadings.Timestamp(),
-            //                                     forceOnly.Element(i)));
-        //}
-    }
-    else if(PlotIndex == FNorm){     // Norm(Force)
-        //FNormSignal->AppendPoint(vctDouble2(ForceSensor.FTReadings.Timestamp(),
-        //                                  forceOnly.Norm()));
-
-        //else if(PlotIndex == Txyz) {     // Tx, Ty & Tz
-        //for (int i = 0; i < 3; ++i) {
-            //  TorqueSignal[i]->AppendPoint(vctDouble2(ForceSensor.FTReadings.Timestamp(),
-            //                                      torqueOnly.Element(i)));
-        //}
-    }
 
     // Update the lower/upper limits on the plot
     vct2 range;
@@ -287,59 +245,6 @@ void mtsForceTorqueQtWidget::timerEvent(QTimerEvent * event)
     text.setNum(range[1], 'f', 2);
     UpperLimit->setText(text);
 
-    // Update error state
-    //ForceSensor.GetIsConnected(ForceSensor.IsConnected);
-    //ForceSensor.GetIsSaturated(ForceSensor.IsSaturated);
-    //ForceSensor.GetHasError(ForceSensor.HasError);
-
-    /**
-    if(!ForceSensor.IsConnected) {
-        ErrorMsg->setText(QString("Not Connected"));
-        ErrorMsg->setStyleSheet("QLineEdit {background-color: red }");
-    } else if (ForceSensor.HasError) {
-        ErrorMsg->setText(QString("Hardware Error"));
-        ErrorMsg->setStyleSheet("QLineEdit {background-color: red }");
-    } else if(ForceSensor.IsSaturated) {
-        ErrorMsg->setText(QString("Saturated"));
-        ErrorMsg->setStyleSheet("QLineEdit {background-color: red }");
-    } else {
-        ErrorMsg->setText(QString("Connected : No Error"));
-        ErrorMsg->setStyleSheet("QLineEdit {background-color:green }");
-        }*/
 
     QFTPlot->updateGL();
 }
-/*
-void mtsForceTorqueQtWidget::SlotRebiasFTSensor(void)
-{
-    ForceSensor.RebiasForceTorque();
-}
-*/
-
-/*
-void mtsForceTorqueQtWidget::SlotPlotIndex(int newAxis)
-{    
-    PlotIndex = newAxis;
-    for (int i = 0; i < 5; ++i) {
-        ForceSignal[i]->SetVisible(false);
-        TorqueSignal[i]->SetVisible(false);
-    }
-    FNormSignal->SetVisible(false);
-
-    if(PlotIndex == Fx || PlotIndex == Fy || PlotIndex == Fz) {
-        ForceSignal[PlotIndex]->SetVisible(true);
-    }
-    else if(PlotIndex == Fxyz) {
-        ForceSignal[0]->SetVisible(true);
-        ForceSignal[1]->SetVisible(true);
-        ForceSignal[2]->SetVisible(true);
-    } else if (PlotIndex == Txyz){
-        TorqueSignal[0]->SetVisible(true);
-        TorqueSignal[1]->SetVisible(true);
-        TorqueSignal[2]->SetVisible(true);
-    } else if (PlotIndex == FNorm) {
-        FNormSignal->SetVisible(true);
-    }
-    QFTPlot->SetContinuousExpandYResetSlot();
-}
-*/
