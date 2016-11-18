@@ -20,9 +20,10 @@ http://www.cisst.org/cisst/license.txt.
 #define _mtsForceTorqueQtWidget_h
 
 #include <cisstMultiTask/mtsComponent.h>
-#include <cisstMultiTask/mtsVector.h>
 #include <cisstMultiTask/mtsQtWidgetIntervalStatistics.h>
-#include <cisstParameterTypes/prmPositionCartesianGet.h>
+
+#include <cisstParameterTypes/prmForceCartesianGet.h>
+
 #include <cisstVector/vctQtWidgetDynamicVector.h>
 #include <cisstVector/vctPlot2DOpenGLQtWidget.h>
 
@@ -63,18 +64,10 @@ private:
     void SetupSensorPlot(void);
 
 private:
-    struct NetFTStruct {
-//        mtsFunctionVoid RebiasForceTorque;
+    struct {
         mtsFunctionRead GetForceTorque;        
         mtsFunctionRead GetPeriodStatistics;
-//        mtsFunctionRead GetIsConnected;
-//        mtsFunctionRead GetIsSaturated;
-//        mtsFunctionRead GetHasError;
-
-//       mtsDoubleVec FTReadings;
-//        bool IsConnected;
-//        bool IsSaturated;
-//        bool HasError;
+        prmForceCartesianGet ForceTorque;
     } ForceSensor;
 
 //   mtsBool IsSaturated;

@@ -41,9 +41,10 @@ mtsForceTorqueQtWidget::mtsForceTorqueQtWidget(const std::string & componentName
 {
     // Setup CISST Interface
     mtsInterfaceRequired * interfaceRequired;
-    interfaceRequired = AddInterfaceRequired("RequiresForceTorqueSensor");
-    if(interfaceRequired) {
-         interfaceRequired->AddFunction("GetPeriodStatistics", ForceSensor.GetPeriodStatistics);
+    interfaceRequired = AddInterfaceRequired("ForceSensor");
+    if (interfaceRequired) {
+        interfaceRequired->AddFunction("GetForceTorque", ForceSensor.GetForceTorque);
+        interfaceRequired->AddFunction("GetPeriodStatistics", ForceSensor.GetPeriodStatistics);
    }
 
     setupUi();
@@ -221,17 +222,24 @@ void mtsForceTorqueQtWidget::timerEvent(QTimerEvent * event)
     if (this->isHidden()) {
         return;
     }
+
+    // force torque data
     mtsExecutionResult executionResult;
+    executionResult = ForceSensor.GetForceTorque(ForceSensor.ForceTorque);
     if (!executionResult) {
-        CMN_LOG_CLASS_RUN_ERROR << "ForceSensor.GetFTData failed, \""
+        CMN_LOG_CLASS_RUN_ERROR << "ForceSensor.GetForceTorque failed, \""
                                 << executionResult << "\"" << std::endl;
     }
 
-    // Uppdate the plot
-    vctDoubleVec forceOnly(3, 0.0), torqueOnly(3, 0.0);
-    ForceSensor.GetPeriodStatistics(IntervalStatistics);
-    QMIntervalStatistics->SetValue(IntervalStatistics);
+    QFTSensorValues->SetValue(vctDoubleVec(ForceSensor.ForceTorque.Force()));
 
+
+
+    
+    // missing all the code to plot, see old widget to do it
+
+
+    
     // Update the lower/upper limits on the plot
     vct2 range;
     if(PlotIndex < Txyz) {
@@ -245,6 +253,10 @@ void mtsForceTorqueQtWidget::timerEvent(QTimerEvent * event)
     text.setNum(range[1], 'f', 2);
     UpperLimit->setText(text);
 
-
     QFTPlot->updateGL();
+
+
+    // period stats data
+    ForceSensor.GetPeriodStatistics(IntervalStatistics);
+    QMIntervalStatistics->SetValue(IntervalStatistics);
 }

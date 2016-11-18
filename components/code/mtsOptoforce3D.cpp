@@ -75,6 +75,7 @@ void mtsOptoforce3D::Init(void)
         interfaceProvided->AddCommandReadState(StateTable, ForceTorque, "GetForceTorque");
         interfaceProvided->AddCommandReadState(StateTable, connected, "GetConnected");
         interfaceProvided->AddCommandReadState(StateTable, StateTable.Period, "GetTaskPeriod");
+        interfaceProvided->AddCommandReadState(StateTable, StateTable.PeriodStats, "GetPeriodStatistics");
         interfaceProvided->AddCommandRead(&mtsOptoforce3D::GetSensorConfig, this, "GetSensorConfig");
         interfaceProvided->AddCommandWrite(&mtsOptoforce3D::SetSensorConfig, this, "SetSensorConfig");
         interfaceProvided->AddCommandRead(&mtsOptoforce3D::IsCalibrated, this, "IsCalibrated");
@@ -106,7 +107,7 @@ void mtsOptoforce3D::Init(void)
     matrix_cal = vctDouble3x3::Eye();
 }
 
-void mtsOptoforce3D::Configure(const std::string &filename)
+void mtsOptoforce3D::Configure(const std::string & filename)
 {
     matrix_a_valid = false;
 #if CISST_HAS_JSON
@@ -117,8 +118,15 @@ void mtsOptoforce3D::Configure(const std::string &filename)
         Json::Reader jsonReader;
 
         jsonStream.open(filename.c_str());
+        if (!jsonStream) {
+            CMN_LOG_CLASS_INIT_ERROR << "Configure: file not found or unable to open" << std::endl
+                                     << filename << std::endl;
+
+            return;
+        }
         if (!jsonReader.parse(jsonStream, jsonConfig)) {
             CMN_LOG_CLASS_INIT_ERROR << "Configure: failed to parse configuration" << std::endl
+                                     << filename << std::endl
                                      << jsonReader.getFormattedErrorMessages();
             return;
         }

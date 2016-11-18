@@ -28,6 +28,7 @@ http://www.cisst.org/cisst/license.txt.
 #include <cisstCommon/cmnCommandLineOptions.h>
 #include <cisstMultiTask/mtsTaskManager.h>
 #include <sawOptoforceSensor/mtsOptoforce3D.h>
+#include <sawOptoforceSensor/mtsForceTorqueQtWidget.h>
 
 #include <ros/ros.h>
 #include <cisst_ros_bridge/mtsROSBridge.h>
@@ -97,9 +98,15 @@ int main(int argc, char * argv[])
     // create a Qt user interface if needed
     QApplication * application;
     QTabWidget * tabWidget;
+    mtsForceTorqueQtWidget * sensorWidget;
     if (hasQt) {
         application = new QApplication(argc, argv);
         tabWidget = new QTabWidget;
+        sensorWidget = new mtsForceTorqueQtWidget("Optoforce3D-GUI");
+        tabWidget->addTab(sensorWidget, "OptoForce");
+        componentManager->AddComponent(sensorWidget);
+        componentManager->Connect(sensorWidget->GetName(), "ForceSensor",
+                                  sensor->GetName(), "Force");
     }
 
     // configure the bridge
