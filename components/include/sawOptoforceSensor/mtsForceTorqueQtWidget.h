@@ -21,7 +21,7 @@ http://www.cisst.org/cisst/license.txt.
 
 #include <cisstMultiTask/mtsComponent.h>
 #include <cisstMultiTask/mtsQtWidgetIntervalStatistics.h>
-
+#include <cisstMultiTask/mtsVector.h>
 #include <cisstParameterTypes/prmForceCartesianGet.h>
 
 #include <cisstVector/vctQtWidgetDynamicVector.h>
@@ -65,9 +65,13 @@ private:
 
 private:
     struct {
-        mtsFunctionRead GetForceTorque;        
+        
+        mtsFunctionRead GetFTData;
         mtsFunctionRead GetPeriodStatistics;
         prmForceCartesianGet ForceTorque;
+
+        mtsDoubleVec FTReadings;
+        
     } ForceSensor;
 
 //   mtsBool IsSaturated;
@@ -100,7 +104,7 @@ private:
 private slots:
     void timerEvent(QTimerEvent * event);
 //    void SlotRebiasFTSensor(void);
-//    void SlotPlotIndex(int newAxis);
+     void SlotPlotIndex(int newAxis);
 };
 
 CMN_DECLARE_SERVICES_INSTANTIATION(mtsForceTorqueQtWidget);

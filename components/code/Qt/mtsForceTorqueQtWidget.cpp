@@ -43,7 +43,9 @@ mtsForceTorqueQtWidget::mtsForceTorqueQtWidget(const std::string & componentName
     mtsInterfaceRequired * interfaceRequired;
     interfaceRequired = AddInterfaceRequired("ForceSensor");
     if (interfaceRequired) {
-        interfaceRequired->AddFunction("GetForceTorque", ForceSensor.GetForceTorque);
+
+        interfaceRequired->AddFunction("GetFTData", ForceSensor.GetFTData);
+        //  interfaceRequired->AddFunction("GetForceTorque", ForceSensor.ForceTorque);
         interfaceRequired->AddFunction("GetPeriodStatistics", ForceSensor.GetPeriodStatistics);
    }
 
@@ -167,7 +169,7 @@ void mtsForceTorqueQtWidget::setupUi()
     QWidget * tab2 = new QWidget;
     tab2->setLayout(tab2Layout);
 
-    // Setup tab widget
+    // Setuptab widget
     tabWidget->addTab(tab1, "Sensor Stats");
     tabWidget->addTab(tab2, "Interval Stats");
 
@@ -223,9 +225,11 @@ void mtsForceTorqueQtWidget::timerEvent(QTimerEvent * event)
         return;
     }
 
+    std::cout << "force torque data \n";
     // force torque data
     mtsExecutionResult executionResult;
-    executionResult = ForceSensor.GetForceTorque(ForceSensor.ForceTorque);
+    executionResult = ForceSensor.GetFTData(ForceSensor.FTReadings);
+    //executionResult = ForceSensor.GetForceTorque(ForceSensor.ForceTorque);
     if (!executionResult) {
         CMN_LOG_CLASS_RUN_ERROR << "ForceSensor.GetForceTorque failed, \""
                                 << executionResult << "\"" << std::endl;
@@ -234,11 +238,43 @@ void mtsForceTorqueQtWidget::timerEvent(QTimerEvent * event)
     QFTSensorValues->SetValue(vctDoubleVec(ForceSensor.ForceTorque.Force()));
 
 
-
+    std:: cout << "beginning to plot code\n";
     
     // missing all the code to plot, see old widget to do it
+ 
+    vctDoubleVec forceOnly(3, 0.0), torqueOnly(3, 0.0);
+    std::cout<< "assigning force\n";
+    //forceOnly.Assign(ForceSensor.FTReadings, 3);
+    std::cout << "assigning torque\n";
+    //torqueOnly.Assign(ForceSensor.FTReadings, 3, 0, 3);
+    ForceSensor.GetPeriodStatistics(IntervalStatistics);
+    QMIntervalStatistics->SetValue(IntervalStatistics);
+    forceOnly.Assign(ForceSensor.FTReadings, 3);
+    torqueOnly.Assign(ForceSensor.FTReadings, 3, 0, 3);
 
+    std::cout << "comparisons beginning \n";
+    if(PlotIndex ==  Fx || PlotIndex ==  Fy || PlotIndex ==  Fz)           // Fx,Fy or Fz
+        ForceSignal[PlotIndex]->AppendPoint(vctDouble2(ForceSensor.FTReadings.Timestamp(),
+                                                       forceOnly.Element(PlotIndex)));
+    else if(PlotIndex == Fxyz) {        // Fx, Fy & Fz
+        for (int i = 0; i < 3; ++i) {
+            ForceSignal[i]->AppendPoint(vctDouble2(ForceSensor.FTReadings.Timestamp(),
+                                                   forceOnly.Element(i)));
+        }
+    }
+    else if(PlotIndex == FNorm)     // Norm(Force)
+        FNormSignal->AppendPoint(vctDouble2(ForceSensor.FTReadings.Timestamp(),
+                                            forceOnly.Norm()));
 
+    else if(PlotIndex == Txyz) {     // Tx, Ty & Tz
+        for (int i = 0; i < 3; ++i) {
+            TorqueSignal[i]->AppendPoint(vctDouble2(ForceSensor.FTReadings.Timestamp(),
+                                                    torqueOnly.Element(i)));
+        }
+    }
+    
+
+    std::cout << "update lower/upper limits on plot";
     
     // Update the lower/upper limits on the plot
     vct2 range;
@@ -255,8 +291,13 @@ void mtsForceTorqueQtWidget::timerEvent(QTimerEvent * event)
 
     QFTPlot->updateGL();
 
-
+    std::cout << "period stats data";
     // period stats data
     ForceSensor.GetPeriodStatistics(IntervalStatistics);
     QMIntervalStatistics->SetValue(IntervalStatistics);
+}
+
+void mtsForceTorqueQtWidget::SlotPlotIndex(int newAxis)
+{
+    std::cerr << newAxis;
 }
