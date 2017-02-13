@@ -19,13 +19,12 @@ http://www.cisst.org/cisst/license.txt.
 #ifndef _mtsForceTorqueQtWidget_h
 #define _mtsForceTorqueQtWidget_h
 
+#include <cisstVector/vctForceTorqueQtWidget.h>
 #include <cisstMultiTask/mtsComponent.h>
 #include <cisstMultiTask/mtsQtWidgetIntervalStatistics.h>
 #include <cisstMultiTask/mtsVector.h>
 #include <cisstParameterTypes/prmForceCartesianGet.h>
 
-#include <cisstVector/vctQtWidgetDynamicVector.h>
-#include <cisstVector/vctPlot2DOpenGLQtWidget.h>
 
 #include <QWidget>
 #include <QtGui>
@@ -65,36 +64,18 @@ private:
 
 private:
     struct {
-        
-        mtsFunctionRead GetFTData;
+        mtsFunctionRead GetForceTorque;
         mtsFunctionRead GetPeriodStatistics;
         prmForceCartesianGet ForceTorque;
-
-        mtsDoubleVec FTReadings;
-        
     } ForceSensor;
 
 //   mtsBool IsSaturated;
-    vctQtWidgetDynamicVectorDoubleRead * QFTSensorValues;
+    vctForceTorqueQtWidget * QVForceTorque;
 
 //    QPushButton * RebiasButton;
 //    QLabel * ConnectionStatus;
 
-    QLabel * UpperLimit;
-    QLabel * LowerLimit;
-
-//    QLineEdit * ErrorMsg;
-
-    vctPlot2DOpenGLQtWidget * QFTPlot;
-    vctPlot2DBase::Signal * ForceSignal[3];
-    vctPlot2DBase::Signal * FNormSignal;
-    vctPlot2DBase::Signal * TorqueSignal[3];
-
-    vctPlot2DBase::Scale * ForceScale;
-    vctPlot2DBase::Scale * TorqueScale;
-
     double Time;
-    int PlotIndex;
     int TimerPeriodInMilliseconds;
 
     // Timing
@@ -104,7 +85,6 @@ private:
 private slots:
     void timerEvent(QTimerEvent * event);
 //    void SlotRebiasFTSensor(void);
-     void SlotPlotIndex(int newAxis);
 };
 
 CMN_DECLARE_SERVICES_INSTANTIATION(mtsForceTorqueQtWidget);
