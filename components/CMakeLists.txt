@@ -65,6 +65,12 @@ if (cisst_FOUND_AS_REQUIRED)
   set_property (TARGET sawOptoforceSensor PROPERTY FOLDER "sawOptoforceSensor")
   cisst_target_link_libraries (sawOptoforceSensor ${REQUIRED_CISST_LIBRARIES})
 
+  # add Qt code
+  if (CISST_HAS_QT)
+    add_subdirectory (code/Qt)
+    set (sawOptoforceSensor_LIBRARIES ${sawOptoforceSensor_LIBRARIES} ${sawOptoforceSensorQt_LIBRARIES})
+  endif (CISST_HAS_QT)
+
   set (sawOptoforceSensor_CMAKE_CONFIG_FILE
        "${sawOptoforceSensor_CONFIG_FILE_DIR}/sawOptoforceSensorConfig.cmake")
 
