@@ -29,14 +29,14 @@ cisst/SAW component to interface via USB (virtual COM port) to Optoforce force s
  + The option `-n` allows to set the ROS namespace (default is `/optoforce`).  This is useful if you have multiple force sensors
  + Example:
 
-   ```
+   ```sh
    rosrun optoforce_ros optoforce_json -j /path_to_ws/src/cisst-saw/sawOptoforceSensor/share/OMD-10-SE-10N.json -s /dev/ttyACM1 -n /opto2 -t
    Options provided:
  - json configuration file [/path_to_ws/src/cisst-saw/sawOptoforceSensor/share/OMD-10-SE-10N.json]
  - serial port as a string [/dev/ttyACM1]
  - ROS topic namespace, default is "/optoforce" (topic is "/optoforce/wrench") [/opto2]
  - text only interface, do not create Qt widgets []
-  ```
+   ```
 
 *All:*
 
