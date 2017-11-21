@@ -2,10 +2,10 @@
 /* ex: set filetype=cpp softtabstop=4 shiftwidth=4 tabstop=4 cindent expandtab: */
 
 /*
-  Author(s):  Anton Deguet
-  Created on: 2013-08-24
+  Author(s):  Anton Deguet, Dorothy Hu
+  Created on: 2017-01-20
 
-  (C) Copyright 2013 Johns Hopkins University (JHU), All Rights Reserved.
+  (C) Copyright 2017 Johns Hopkins University (JHU), All Rights Reserved.
 
 --- begin cisst license - do not edit ---
 
@@ -24,9 +24,6 @@ http://www.cisst.org/cisst/license.txt.
 #include <QString>
 #include <QtGui>
 #include <QMessageBox>
-#include <QHeaderView>
-#include <QComboBox>
-#include <QLineEdit>
 
 // cisst
 #include <cisstMultiTask/mtsInterfaceRequired.h>
@@ -36,7 +33,7 @@ CMN_IMPLEMENT_SERVICES_DERIVED_ONEARG(mtsForceTorqueQtWidget, mtsComponent, std:
 
 mtsForceTorqueQtWidget::mtsForceTorqueQtWidget(const std::string & componentName, double periodInSeconds):
     mtsComponent(componentName),
-    TimerPeriodInMilliseconds(periodInSeconds) // Qt timers are in milliseconds
+    TimerPeriodInMilliseconds(periodInSeconds * 1000) // Qt timers are in milliseconds
 {
     // Setup CISST Interface
     mtsInterfaceRequired * interfaceRequired;
@@ -84,10 +81,6 @@ void mtsForceTorqueQtWidget::closeEvent(QCloseEvent * event)
 
 void mtsForceTorqueQtWidget::setupUi()
 {
-    QFont font;
-    font.setBold(true);
-    font.setPointSize(12);
-
     QTabWidget * tabWidget = new QTabWidget;
 
     //--- Tab 1
@@ -106,7 +99,7 @@ void mtsForceTorqueQtWidget::setupUi()
     resize(sizeHint());
 }
 
-void mtsForceTorqueQtWidget::timerEvent(QTimerEvent * event)
+void mtsForceTorqueQtWidget::timerEvent(QTimerEvent * CMN_UNUSED(event))
 {
     // make sure we should update the display
     if (this->isHidden()) {
@@ -121,7 +114,8 @@ void mtsForceTorqueQtWidget::timerEvent(QTimerEvent * event)
                                 << executionResult << "\"" << std::endl;
     }
     QVForceTorque->SetValue(ForceSensor.ForceTorque.F(),
-                            ForceSensor.ForceTorque.T());
+                            ForceSensor.ForceTorque.T(),
+                            ForceSensor.ForceTorque.Timestamp());
 
     ForceSensor.GetPeriodStatistics(IntervalStatistics);
     QMIntervalStatistics->SetValue(IntervalStatistics);
