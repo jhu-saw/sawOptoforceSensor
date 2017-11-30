@@ -2,10 +2,10 @@
 /* ex: set filetype=cpp softtabstop=4 shiftwidth=4 tabstop=4 cindent expandtab: */
 
 /*
-  Author(s):  Anton Deguet
-  Created on: 2013-08-24
+  Author(s):  Anton Deguet, Dorothy Hu
+  Created on: 2017-01-20
 
-  (C) Copyright 2013-2014 Johns Hopkins University (JHU), All Rights Reserved.
+  (C) Copyright 2017 Johns Hopkins University (JHU), All Rights Reserved.
 
 --- begin cisst license - do not edit ---
 
@@ -21,10 +21,9 @@ http://www.cisst.org/cisst/license.txt.
 
 #include <cisstVector/vctForceTorqueQtWidget.h>
 #include <cisstMultiTask/mtsComponent.h>
-#include <cisstMultiTask/mtsQtWidgetIntervalStatistics.h>
-#include <cisstMultiTask/mtsVector.h>
-#include <cisstParameterTypes/prmForceCartesianGet.h>
 
+#include <cisstMultiTask/mtsQtWidgetIntervalStatistics.h>
+#include <cisstParameterTypes/prmForceCartesianGet.h>
 
 #include <QWidget>
 #include <QtGui>
@@ -40,16 +39,9 @@ class CISST_EXPORT mtsForceTorqueQtWidget: public QWidget, public mtsComponent
     CMN_DECLARE_SERVICES(CMN_DYNAMIC_CREATION_ONEARG, CMN_LOG_ALLOW_ALL);
 
 public:
-    enum {
-        Fx = 0,
-        Fy = 1,
-        Fz = 2,
-        FNorm = 3,
-        Fxyz = 4,
-        Txyz = 5
-    };
-    mtsForceTorqueQtWidget(const std::string & componentName, double periodInSeconds = 50.0 * cmn_ms);
-    ~mtsForceTorqueQtWidget(){}
+    mtsForceTorqueQtWidget(const std::string & componentName,
+                           double periodInSeconds = 50.0 * cmn_ms);
+    ~mtsForceTorqueQtWidget() {}
 
     void Configure(const std::string & filename = "");
     void Startup(void);
