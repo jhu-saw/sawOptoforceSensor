@@ -29,10 +29,11 @@ if (cisst_FOUND_AS_REQUIRED)
 
   include (${CISST_USE_FILE})
 
-  # include_directories(include)
-  include_directories (${catkin_INCLUDE_DIRS})
-
-  file (MAKE_DIRECTORY "${CATKIN_DEVEL_PREFIX}/include")
+  # catkin/ROS paths
+  cisst_is_catkin_build (sawOptoforceSensorExampleQt_IS_CATKIN_BUILT)
+  if (sawOptoforceSensorExampleQt_IS_CATKIN_BUILT)
+    set (EXECUTABLE_OUTPUT_PATH "${CATKIN_DEVEL_PREFIX}/bin")
+  endif ()
 
   # sawAtracsysFusionTrack has been compiled within cisst, we should find it automatically
   find_package (sawOptoforceSensor 1.0.0)

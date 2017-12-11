@@ -13,5 +13,5 @@ project (sawOptoforceSensorExamples)
 
 cmake_minimum_required (VERSION 2.8)
 
-add_subdirectory (text)
+add_subdirectory (console)
 add_subdirectory (Qt)
