@@ -97,7 +97,7 @@ int main(int argc, char * argv[])
 
     // create a Qt user interface if needed
     QApplication * application;
-    QTabWidget * tabWidget;
+    QTabWidget * tabWidget = 0;
     mtsForceTorqueQtWidget * sensorWidget;
     if (hasQt) {
         application = new QApplication(argc, argv);
