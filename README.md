@@ -3,12 +3,12 @@ sawOptoforceSensor
 
 cisst/SAW component to interface via USB (virtual COM port) to Optoforce force sensor.
 
-*Windows:*
+**Windows:**
 
  + Requires a virtual COM driver from Microchip, which is available on the USB stick provided by Optoforce
    (see /DAQ Material/USB/Driver, if not automatically installed by Windows).
 
-*Linux:*
+**Linux:**
 
  + Linux automatically creates serial device, such as `ttyACM0`.
  + Check default permissions on `/dev/ttyACM0` using `ls -l /dev/ttyACM0`.  On Ubuntu a typical output should be:
@@ -23,7 +23,7 @@ cisst/SAW component to interface via USB (virtual COM port) to Optoforce force s
    OptoforceExample /dev/ttyACM0  OMD-10-SE-10N.json
    ```
 
-*ROS:*
+**ROS:**
  + Package name is `optoforce_ros`, main node example is `optoforce_json`
  + The option `-t` starts the node in text only mode, otherwise the node has a Qt based GUI
  + The option `-n` allows to set the ROS namespace (default is `/optoforce`).  This is useful if you have multiple force sensors
@@ -32,13 +32,13 @@ cisst/SAW component to interface via USB (virtual COM port) to Optoforce force s
    ```sh
    rosrun optoforce_ros optoforce_json -j /path_to_ws/src/cisst-saw/sawOptoforceSensor/share/OMD-10-SE-10N.json -s /dev/ttyACM1 -n /opto2 -t
    Options provided:
- - json configuration file [/path_to_ws/src/cisst-saw/sawOptoforceSensor/share/OMD-10-SE-10N.json]
- - serial port as a string [/dev/ttyACM1]
- - ROS topic namespace, default is "/optoforce" (topic is "/optoforce/wrench") [/opto2]
- - text only interface, do not create Qt widgets []
+   - json configuration file [/path_to_ws/src/cisst-saw/sawOptoforceSensor/share/OMD-10-SE-10N.json]
+   - serial port as a string [/dev/ttyACM1]
+   - ROS topic namespace, default is "/optoforce" (topic is "/optoforce/wrench") [/opto2]
+   - text only interface, do not create Qt widgets []
    ```
 
-*All:*
+**All:**
 
 The software expects a JSON format configuration file, which should specify the force sensor scale and
 (optionally) a calibration matrix, `cal-matrix`. See the sample JSON configuration files in the `share` folder.
