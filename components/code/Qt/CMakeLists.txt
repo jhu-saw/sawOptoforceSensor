@@ -1,7 +1,6 @@
 #
 #
-# (C) Copyright 2013-2014 Johns Hopkins University (JHU), All Rights
-# Reserved.
+# (C) Copyright 2013-2018 Johns Hopkins University (JHU), All Rights Reserved.
 #
 # --- begin cisst license - do not edit ---
 #
@@ -13,7 +12,6 @@
 
 set (REQUIRED_CISST_LIBRARIES
      cisstCommon
-     cisstCommonXML
      cisstVector
      cisstVectorQt
      cisstNumerical

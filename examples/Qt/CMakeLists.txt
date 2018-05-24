@@ -1,5 +1,5 @@
 #
-# (C) Copyright 2015-2017 Johns Hopkins University (JHU), All Rights Reserved.
+# (C) Copyright 2015-2018 Johns Hopkins University (JHU), All Rights Reserved.
 #
 # --- begin cisst license - do not edit ---
 #
@@ -35,7 +35,7 @@ if (cisst_FOUND_AS_REQUIRED)
     set (EXECUTABLE_OUTPUT_PATH "${CATKIN_DEVEL_PREFIX}/bin")
   endif ()
 
-  # sawAtracsysFusionTrack has been compiled within cisst, we should find it automatically
+  # sawOptoforceSensor has been compiled within cisst, we should find it automatically
   find_package (sawOptoforceSensor 1.0.0)
 
   if (sawOptoforceSensor_FOUND)
