@@ -1,5 +1,5 @@
 #
-# (C) Copyright 2016 Johns Hopkins University (JHU), All Rights Reserved.
+# (C) Copyright 2016-2019 Johns Hopkins University (JHU), All Rights Reserved.
 #
 # --- begin cisst license - do not edit ---
 #
@@ -21,7 +21,7 @@ set (REQUIRED_CISST_LIBRARIES cisstCommon
                               cisstMultiTask
                               cisstParameterTypes)
 
-find_package (cisst 1.0.8 COMPONENTS ${REQUIRED_CISST_LIBRARIES})
+find_package (cisst 1.0.11 COMPONENTS ${REQUIRED_CISST_LIBRARIES})
 
 if (cisst_FOUND_AS_REQUIRED)
 
@@ -46,7 +46,7 @@ if (cisst_FOUND_AS_REQUIRED)
 
   # Set the version number
   set (sawOptoforceSensor_VERSION_MAJOR "1")
-  set (sawOptoforceSensor_VERSION_MINOR "0")
+  set (sawOptoforceSensor_VERSION_MINOR "1")
   set (sawOptoforceSensor_VERSION_PATCH "0")
   set (sawOptoforceSensor_VERSION "${sawOptoforceSensor_VERSION_MAJOR}.${sawOptoforceSensor_VERSION_MINOR}.${sawOptoforceSensor_VERSION_PATCH}")
 

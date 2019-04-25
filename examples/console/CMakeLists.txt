@@ -1,5 +1,5 @@
 #
-# (C) Copyright 2016 Johns Hopkins University (JHU), All Rights Reserved.
+# (C) Copyright 2016-2019 Johns Hopkins University (JHU), All Rights Reserved.
 #
 # --- begin cisst license - do not edit ---
 #
@@ -19,7 +19,7 @@ set (REQUIRED_CISST_LIBRARIES cisstCommon
                               cisstParameterTypes)
 
 # find cisst and make sure the required libraries have been compiled
-find_package (cisst 1.0.8 COMPONENTS ${REQUIRED_CISST_LIBRARIES})
+find_package (cisst 1.0.11 COMPONENTS ${REQUIRED_CISST_LIBRARIES})
 
 if (cisst_FOUND_AS_REQUIRED)
 
@@ -32,7 +32,7 @@ if (cisst_FOUND_AS_REQUIRED)
     set (EXECUTABLE_OUTPUT_PATH "${CATKIN_DEVEL_PREFIX}/bin")
   endif ()
 
-  find_package (sawOptoforceSensor 1.0.0 REQUIRED)
+  find_package (sawOptoforceSensor 1.1.0 REQUIRED)
   include_directories (${sawOptoforceSensor_INCLUDE_DIR})
   link_directories (${sawOptoforceSensor_LIBRARY_DIR})
 

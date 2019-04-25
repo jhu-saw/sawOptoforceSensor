@@ -1,5 +1,5 @@
 #
-# (C) Copyright 2015-2016 Johns Hopkins University (JHU), All Rights Reserved.
+# (C) Copyright 2015-2019 Johns Hopkins University (JHU), All Rights Reserved.
 #
 # --- begin cisst license - do not edit ---
 #
@@ -37,7 +37,7 @@ set (REQUIRED_CISST_LIBRARIES
      cisstParameterTypes
      cisstQt)
 
-find_package (cisst 1.0.8 REQUIRED ${REQUIRED_CISST_LIBRARIES})
+find_package (cisst 1.0.11 REQUIRED ${REQUIRED_CISST_LIBRARIES})
 
 if (cisst_FOUND_AS_REQUIRED)
 
@@ -52,7 +52,7 @@ if (cisst_FOUND_AS_REQUIRED)
                   CATKIN_DEPENDS cisst_ros_bridge geometry_msgs roscpp std_msgs)
 
   # sawAtracsysFusionTrack has been compiled within cisst, we should find it automatically
-  find_package (sawOptoforceSensor 1.0.0)
+  find_package (sawOptoforceSensor 1.1.0)
 
   if (sawOptoforceSensor_FOUND)
 
