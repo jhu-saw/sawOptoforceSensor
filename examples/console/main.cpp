@@ -20,6 +20,7 @@ http://www.cisst.org/cisst/license.txt.
 #include <cisstOSAbstraction/osaSleep.h>
 #include <cisstMultiTask/mtsTaskContinuous.h>
 #include <cisstMultiTask/mtsInterfaceRequired.h>
+#include <cisstMultiTask/mtsManagerLocal.h>
 #include <sawOptoforceSensor/mtsOptoforce3D.h>
 
 class OptoforceSensorClient : public mtsTaskMain {
