@@ -1,6 +1,5 @@
 #
-#
-# (C) Copyright 2013-2018 Johns Hopkins University (JHU), All Rights Reserved.
+# (C) Copyright 2013-2020 Johns Hopkins University (JHU), All Rights Reserved.
 #
 # --- begin cisst license - do not edit ---
 #
@@ -33,8 +32,8 @@ if (cisst_FOUND_AS_REQUIRED)
   # for Qt generated header files
   include_directories (${CMAKE_CURRENT_BINARY_DIR})
   if (CISST_HAS_QT4)
-    qt4_wrap_cpp (SAW_ATINETFT_QT_WRAP_CPP
-                  ${sawOptoforceSensor_HEADER_DIR}/mtsForceTorqueQtWidget.h
+    qt4_wrap_cpp (SAW_OPTOFORCE_SENSOR_QT_WRAP_CPP
+                  ${sawOptoforceSensor_HEADER_DIR}/mtsOptoforce3DQtWidget.h
                   )
   else (CISST_HAS_QT4)
     set (CMAKE_AUTOMOC ON)
@@ -42,9 +41,9 @@ if (cisst_FOUND_AS_REQUIRED)
 
   add_library (sawOptoforceSensorQt
                ${sawOptoforceSensor_HEADER_DIR}/sawOptoforceSensorQtExport.h
-               ${sawOptoforceSensor_HEADER_DIR}/mtsForceTorqueQtWidget.h
-               mtsForceTorqueQtWidget.cpp
-               ${SAW_ATINETFT_QT_WRAP_CPP})
+               ${sawOptoforceSensor_HEADER_DIR}/mtsOptoforce3DQtWidget.h
+               mtsOptoforce3DQtWidget.cpp
+               ${SAW_OPTOFORCE_SENSOR_QT_WRAP_CPP})
   set_property (TARGET sawOptoforceSensorQt PROPERTY FOLDER "sawOptoforceSensor") 
   cisst_target_link_libraries (sawOptoforceSensorQt ${REQUIRED_CISST_LIBRARIES})
 

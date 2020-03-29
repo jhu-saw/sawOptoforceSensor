@@ -5,7 +5,7 @@
   Author(s):  Anton Deguet
   Created on: 2014-07-21
 
-  (C) Copyright 2014-2016 Johns Hopkins University (JHU), All Rights Reserved.
+  (C) Copyright 2014-2020 Johns Hopkins University (JHU), All Rights Reserved.
 
 --- begin cisst license - do not edit ---
 
@@ -26,9 +26,10 @@ http://www.cisst.org/cisst/license.txt.
 #include <cisstCommon/cmnUnits.h>
 #include <cisstCommon/cmnGetChar.h>
 #include <cisstCommon/cmnCommandLineOptions.h>
+#include <cisstCommon/cmnQt.h>
 #include <cisstMultiTask/mtsTaskManager.h>
 #include <sawOptoforceSensor/mtsOptoforce3D.h>
-#include <sawOptoforceSensor/mtsForceTorqueQtWidget.h>
+#include <sawOptoforceSensor/mtsOptoforce3DQtWidget.h>
 
 #include <QApplication>
 #include <QMainWindow>
@@ -47,6 +48,7 @@ int main(int argc, char * argv[])
     cmnCommandLineOptions options;
     std::string jsonConfigFile = "";
     std::string serialPort = "";
+    std::list<std::string> managerConfig;
 
     options.AddOptionOneValue("j", "json-config",
                               "json configuration file",
@@ -54,6 +56,11 @@ int main(int argc, char * argv[])
     options.AddOptionOneValue("s", "serial-port",
                               "serial port as a string",
                               cmnCommandLineOptions::REQUIRED_OPTION, &serialPort);
+    options.AddOptionMultipleValues("m", "component-manager",
+                                    "JSON files to configure component manager",
+                                    cmnCommandLineOptions::OPTIONAL_OPTION, &managerConfig);
+    options.AddOptionNoValue("D", "dark-mode",
+                             "replaces the default Qt palette with darker colors");
 
     // check that all required options have been provided
     std::string errorMessage;
@@ -76,18 +83,27 @@ int main(int argc, char * argv[])
 
     // create a Qt user interface if needed
     QApplication * application = new QApplication(argc, argv);
-    QTabWidget * tabWidget = new QTabWidget;
-    mtsForceTorqueQtWidget * sensorWidget = new mtsForceTorqueQtWidget("Optoforce3D-GUI");
-    tabWidget->addTab(sensorWidget, "OptoForce");
+    cmnQt::QApplicationExitsOnCtrlC();
+    if (options.IsSet("dark-mode")) {
+        cmnQt::SetDarkMode();
+    }
+    
+    mtsOptoforce3DQtWidget * sensorWidget = new mtsOptoforce3DQtWidget("Optoforce3D-GUI");
     componentManager->AddComponent(sensorWidget);
-    componentManager->Connect(sensorWidget->GetName(), "ForceSensor",
+    componentManager->Connect(sensorWidget->GetName(), "Device",
                               sensor->GetName(), "Force");
+
+    // custom user components
+    if (!componentManager->ConfigureJSON(managerConfig)) {
+        CMN_LOG_INIT_ERROR << "Configure: failed to configure component-manager, check cisstLog for error messages" << std::endl;
+        return -1;
+    }
 
     // create and start all components
     componentManager->CreateAllAndWait(5.0 * cmn_s);
     componentManager->StartAllAndWait(5.0 * cmn_s);
 
-    tabWidget->show();
+    sensorWidget->show();
     application->exec();
 
     // kill all components and perform cleanup

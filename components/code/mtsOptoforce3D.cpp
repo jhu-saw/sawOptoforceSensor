@@ -2,7 +2,7 @@
 /* ex: set filetype=cpp softtabstop=4 shiftwidth=4 tabstop=4 cindent expandtab: */
 
 /*
-  (C) Copyright 2016 Johns Hopkins University (JHU), All Rights Reserved.
+  (C) Copyright 2016-2020 Johns Hopkins University (JHU), All Rights Reserved.
 
 --- begin cisst license - do not edit ---
 
@@ -43,7 +43,7 @@ mtsOptoforce3D::mtsOptoforce3D(const std::string &name, unsigned int port) : mts
     Init();
 }
 
-mtsOptoforce3D::mtsOptoforce3D(const std::string &name, const std::string &portName) : mtsTaskContinuous(name), 
+mtsOptoforce3D::mtsOptoforce3D(const std::string &name, const std::string &portName) : mtsTaskContinuous(name),
                                                                                        Length(0.0),
                                                                                        bias(0.0), scale(1.0),
                                                                                        matrix_a_valid(false),
@@ -66,28 +66,29 @@ void mtsOptoforce3D::Init(void)
     StateTable.AddData(ForceTorque, "ForceTorque");
     StateTable.AddData(connected, "Connected");
 
-    mtsInterfaceProvided * interfaceProvided = this->AddInterfaceProvided("Force");
-    if (interfaceProvided) {
-        interfaceProvided->AddCommandReadState(StateTable, Count, "GetCount");
-        interfaceProvided->AddCommandReadState(StateTable, Status, "GetStatus");
-        interfaceProvided->AddCommandReadState(StateTable, RawSensor, "GetForceRaw");
-        interfaceProvided->AddCommandReadState(StateTable, Force, "GetForce");
-        interfaceProvided->AddCommandReadState(StateTable, ForceTorque, "GetForceTorque");
-        interfaceProvided->AddCommandReadState(StateTable, connected, "GetConnected");
-        interfaceProvided->AddCommandReadState(StateTable, StateTable.Period, "GetTaskPeriod");
-        interfaceProvided->AddCommandReadState(StateTable, StateTable.PeriodStats, "GetPeriodStatistics");
-        interfaceProvided->AddCommandRead(&mtsOptoforce3D::GetSensorConfig, this, "GetSensorConfig");
-        interfaceProvided->AddCommandWrite(&mtsOptoforce3D::SetSensorConfig, this, "SetSensorConfig");
-        interfaceProvided->AddCommandRead(&mtsOptoforce3D::IsCalibrated, this, "IsCalibrated");
-        interfaceProvided->AddCommandVoid(&mtsOptoforce3D::Uncalibrate, this, "Uncalibrate");
-        interfaceProvided->AddCommandVoid(&mtsOptoforce3D::Rebias, this, "Rebias");
-        interfaceProvided->AddCommandVoid(&mtsOptoforce3D::Unbias, this, "Unbias");
-        interfaceProvided->AddCommandRead(&mtsOptoforce3D::GetBias, this, "GetBias");
-        interfaceProvided->AddCommandWrite(&mtsOptoforce3D::SetBias, this, "SetBias");
-        interfaceProvided->AddCommandRead(&mtsOptoforce3D::GetLength, this, "GetLength");
-        interfaceProvided->AddCommandWrite(&mtsOptoforce3D::SetLength, this, "SetLength");
-        interfaceProvided->AddCommandRead(&mtsOptoforce3D::GetScale, this, "GetScale");
-        interfaceProvided->AddCommandWrite(&mtsOptoforce3D::SetScale, this, "SetScale");
+    mInterface = this->AddInterfaceProvided("Force");
+    if (mInterface) {
+        mInterface->AddMessageEvents();
+        mInterface->AddCommandReadState(StateTable, Count, "GetCount");
+        mInterface->AddCommandReadState(StateTable, Status, "GetStatus");
+        mInterface->AddCommandReadState(StateTable, RawSensor, "GetForceRaw");
+        mInterface->AddCommandReadState(StateTable, Force, "GetForce");
+        mInterface->AddCommandReadState(StateTable, ForceTorque, "measured_cf");
+        mInterface->AddCommandReadState(StateTable, connected, "GetConnected");
+        mInterface->AddCommandReadState(StateTable, StateTable.Period, "GetTaskPeriod");
+        mInterface->AddCommandReadState(StateTable, StateTable.PeriodStats, "get_period_statistics");
+        mInterface->AddCommandRead(&mtsOptoforce3D::GetSensorConfig, this, "GetSensorConfig");
+        mInterface->AddCommandWrite(&mtsOptoforce3D::SetSensorConfig, this, "SetSensorConfig");
+        mInterface->AddCommandRead(&mtsOptoforce3D::IsCalibrated, this, "IsCalibrated");
+        mInterface->AddCommandVoid(&mtsOptoforce3D::Uncalibrate, this, "Uncalibrate");
+        mInterface->AddCommandVoid(&mtsOptoforce3D::Rebias, this, "Rebias");
+        mInterface->AddCommandVoid(&mtsOptoforce3D::Unbias, this, "Unbias");
+        mInterface->AddCommandRead(&mtsOptoforce3D::GetBias, this, "GetBias");
+        mInterface->AddCommandWrite(&mtsOptoforce3D::SetBias, this, "SetBias");
+        mInterface->AddCommandRead(&mtsOptoforce3D::GetLength, this, "GetLength");
+        mInterface->AddCommandWrite(&mtsOptoforce3D::SetLength, this, "SetLength");
+        mInterface->AddCommandRead(&mtsOptoforce3D::GetScale, this, "GetScale");
+        mInterface->AddCommandWrite(&mtsOptoforce3D::SetScale, this, "SetScale");
     }
 
     // Configure the serial port
@@ -184,16 +185,16 @@ void mtsOptoforce3D::Configure(const std::string & filename)
 void mtsOptoforce3D::Startup(void)
 {
     if (!configured) {
-        CMN_LOG_CLASS_INIT_ERROR << "Startup: cannot start because component was not correctly configured" << std::endl;
+        mInterface->SendError("Startup: cannot start because component was not correctly configured");
     }
     else {
         // true --> open serial port in blocking mode
         if (!serialPort.Open(true)) {
-            CMN_LOG_CLASS_INIT_ERROR << "Cannot open serial port: " << serialPort.GetPortName() << std::endl;
+            mInterface->SendError("Startup: cannot open serial port: " + serialPort.GetPortName());
         }
         else {
             connected = true;
-            CMN_LOG_CLASS_INIT_VERBOSE << "Serial Port " << serialPort.GetPortName() << " successfully opened" << std::endl;
+            mInterface->SendStatus("Startup: serial port " + serialPort.GetPortName() + " successfully opened");
             // Send the speed, filter, and bias to the sensor so we know how it is configured
             SendCommand(sensorSpeed, sensorFilter, sensorBias);
         }

@@ -45,6 +45,8 @@ class CISST_EXPORT mtsOptoforce3D: public mtsTaskContinuous {
     void Cleanup(void);
 
  protected:
+    mtsInterfaceProvided * mInterface;
+
     unsigned short Count;     // Counter returned by force sensor
     unsigned short Status;    // Force sensor status
     vctDouble3 RawSensor;     // Raw sensor readings (not calibrated)
