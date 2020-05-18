@@ -111,8 +111,9 @@ int main(int argc, char * argv[])
 
     crtk_bridge->bridge_interface_provided(sensor->GetName(),
                                            "Force",
-                                           rosPeriod,
-                                           "optoforce");
+                                           "optoforce",
+                                           rosPeriod);
+    crtk_bridge->Connect();
 
     // custom user components
     if (!componentManager->ConfigureJSON(managerConfig)) {
