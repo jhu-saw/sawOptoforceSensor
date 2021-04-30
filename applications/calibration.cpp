@@ -24,6 +24,7 @@ http://www.cisst.org/cisst/license.txt.
 #include <cisstVector/vctDataFunctionsFixedSizeVectorJSON.h>
 #include <cisstVector/vctDataFunctionsFixedSizeMatrixJSON.h>
 #endif
+#include <cisstMultiTask/mtsManagerLocal.h>
 #include <cisstMultiTask/mtsTaskContinuous.h>
 #include <cisstMultiTask/mtsInterfaceRequired.h>
 #include <cisstNumerical/nmrLSqLin.h>
