@@ -24,6 +24,7 @@ set (sawOptoforceSensor_DIR "${sawOptoforceSensorAll_BINARY_DIR}/components")
 add_subdirectory (examples)
 add_subdirectory (applications)
 
+include (CPack)
 cpack_add_component (sawOptoforceSensor)
 cpack_add_component (sawOptoforceSensor-Examples
                      DEPENDS sawOptoforceSensor)
