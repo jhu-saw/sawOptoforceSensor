@@ -1,5 +1,5 @@
 #
-# (C) Copyright 2016-2021 Johns Hopkins University (JHU), All Rights Reserved.
+# (C) Copyright 2016-2022 Johns Hopkins University (JHU), All Rights Reserved.
 #
 # --- begin cisst license - do not edit ---
 #
@@ -9,9 +9,8 @@
 #
 # --- end cisst license ---
 
-project (sawOptoforceSensor)
-
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 3.10)
+project (sawOptoforceSensor VERSION 1.1.0)
 
 # Core libraries
 set (REQUIRED_CISST_LIBRARIES cisstCommon
@@ -29,73 +28,49 @@ if (cisst_FOUND_AS_REQUIRED)
   include (${CISST_USE_FILE})
 
   # catkin/ROS paths
-  cisst_is_catkin_build (sawOptoforceSensor_IS_CATKIN_BUILT)
-  if (sawOptoforceSensor_IS_CATKIN_BUILT)
-    set (sawOptoforceSensor_CONFIG_FILE_DIR "${CATKIN_DEVEL_PREFIX}/share/sawOptoforceSensor/cmake")
-    set (LIBRARY_OUTPUT_PATH "${sawOptoforceSensor_BINARY_DIR}/lib")
-  else ()
-    set (sawOptoforceSensor_CONFIG_FILE_DIR "${sawOptoforceSensor_BINARY_DIR}")
-  endif ()
+  cisst_set_output_path ()
 
   # create/configure file for find_package (sawOptoforceSensor)
   set (sawOptoforceSensor_INCLUDE_DIR
        "${sawOptoforceSensor_SOURCE_DIR}/include"
        "${sawOptoforceSensor_BINARY_DIR}/include")
+  set (sawOptoforceSensor_HEADER_DIR "${sawOptoforceSensor_SOURCE_DIR}/include/sawOptoforceSensor")
   set (sawOptoforceSensor_LIBRARY_DIR "${LIBRARY_OUTPUT_PATH}")
   set (sawOptoforceSensor_LIBRARIES sawOptoforceSensor)
 
-  # Set the version number
-  set (sawOptoforceSensor_VERSION_MAJOR "1")
-  set (sawOptoforceSensor_VERSION_MINOR "1")
-  set (sawOptoforceSensor_VERSION_PATCH "0")
-  set (sawOptoforceSensor_VERSION "${sawOptoforceSensor_VERSION_MAJOR}.${sawOptoforceSensor_VERSION_MINOR}.${sawOptoforceSensor_VERSION_PATCH}")
-
-  # Generate sawOptoforceSensorRevision.h
-  configure_file ("${sawOptoforceSensor_SOURCE_DIR}/code/sawOptoforceSensorRevision.h.in"
-                  "${sawOptoforceSensor_BINARY_DIR}/include/sawOptoforceSensor/sawOptoforceSensorRevision.h")
-
   include_directories (${sawOptoforceSensor_INCLUDE_DIR})
-  set (sawOptoforceSensor_HEADER_DIR "${sawOptoforceSensor_SOURCE_DIR}/include/sawOptoforceSensor")
+
+  if (CISST_HAS_QT)
+    add_subdirectory (code/Qt)
+    set (sawOptoforceSensor_LIBRARIES ${sawOptoforceSensor_LIBRARIES} sawOptoforceSensorQt)
+  endif ()
+
+  # add all config files for this component
+  cisst_add_config_files (sawOptoforceSensor)
+
   add_library (sawOptoforceSensor
                code/mtsOptoforce3D.cpp
                ${sawOptoforceSensor_HEADER_DIR}/sawOptoforceSensorExport.h
                ${sawOptoforceSensor_HEADER_DIR}/mtsOptoforce3D.h
                ${sawOptoforceSensor_BINARY_DIR}/include/sawOptoforceSensor/sawOptoforceSensorRevision.h)
 
-  set_property (TARGET sawOptoforceSensor PROPERTY FOLDER "sawOptoforceSensor")
+   set_target_properties (sawOptoforceSensor PROPERTIES
+                          VERSION ${sawOptoforceSensor_VERSION}
+                          FOLDER "sawOptoforceSensor")
+
   cisst_target_link_libraries (sawOptoforceSensor ${REQUIRED_CISST_LIBRARIES})
-
-  # add Qt code
-  if (CISST_HAS_QT)
-    add_subdirectory (code/Qt)
-    set (sawOptoforceSensor_LIBRARIES ${sawOptoforceSensor_LIBRARIES} ${sawOptoforceSensorQt_LIBRARIES})
-  endif (CISST_HAS_QT)
-
-  set (sawOptoforceSensor_CMAKE_CONFIG_FILE
-       "${sawOptoforceSensor_CONFIG_FILE_DIR}/sawOptoforceSensorConfig.cmake")
-
-  configure_file ("${CMAKE_CURRENT_SOURCE_DIR}/cmake/sawOptoforceSensorConfig.cmake.in"
-                  "${sawOptoforceSensor_CMAKE_CONFIG_FILE}"
-                  @ONLY)
-
-  cisst_add_config_version ("${sawOptoforceSensor_CONFIG_FILE_DIR}/sawOptoforceSensorConfigVersion.cmake"
-                            VERSION ${sawOptoforceSensor_VERSION}
-                            DESTINATION "share/sawOptoforceSensor"
-                            COMPONENT sawOptoforceSensor)
 
   # Install target for headers and library
   install (DIRECTORY "${sawOptoforceSensor_SOURCE_DIR}/include/sawOptoforceSensor"
                      "${sawOptoforceSensor_BINARY_DIR}/include/sawOptoforceSensor"
            DESTINATION include
+           COMPONENT sawOptoforceSensor-dev
            PATTERN .svn EXCLUDE)
 
-  install (TARGETS sawOptoforceSensor
+  install (TARGETS sawOptoforceSensor COMPONENT sawOptoforceSensor
            RUNTIME DESTINATION bin
            LIBRARY DESTINATION lib
            ARCHIVE DESTINATION lib)
-
-  install (FILES "${sawOptoforceSensor_CMAKE_CONFIG_FILE}"
-           DESTINATION "share/sawOptoforceSensor")
 
 else (cisst_FOUND_AS_REQUIRED)
   message ("Information: code in ${CMAKE_CURRENT_SOURCE_DIR} will not be compiled, it requires ${REQUIRED_CISST_LIBRARIES}")

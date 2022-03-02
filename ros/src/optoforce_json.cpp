@@ -5,7 +5,7 @@
   Author(s):  Anton Deguet
   Created on: 2014-07-21
 
-  (C) Copyright 2014-2020 Johns Hopkins University (JHU), All Rights Reserved.
+  (C) Copyright 2014-2022 Johns Hopkins University (JHU), All Rights Reserved.
 
 --- begin cisst license - do not edit ---
 
@@ -26,6 +26,7 @@ http://www.cisst.org/cisst/license.txt.
 #include <sawOptoforceSensor/mtsOptoforce3DQtWidget.h>
 
 #include <cisst_ros_crtk/mts_ros_crtk_bridge.h>
+#include <ros/ros.h>
 
 #include <QApplication>
 #include <QMainWindow>
@@ -95,8 +96,8 @@ int main(int argc, char * argv[])
     componentManager->AddComponent(crtk_bridge);
 
     // create a Qt user interface if needed
-    QApplication * application;
-    mtsOptoforce3DQtWidget * sensorWidget;
+    QApplication * application = 0;
+    mtsOptoforce3DQtWidget * sensorWidget = 0;
     if (hasQt) {
         application = new QApplication(argc, argv);
         cmnQt::QApplicationExitsOnCtrlC();

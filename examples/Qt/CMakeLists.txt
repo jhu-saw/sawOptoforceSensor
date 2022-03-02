@@ -1,5 +1,5 @@
 #
-# (C) Copyright 2015-2021 Johns Hopkins University (JHU), All Rights Reserved.
+# (C) Copyright 2015-2022 Johns Hopkins University (JHU), All Rights Reserved.
 #
 # --- begin cisst license - do not edit ---
 #
@@ -48,6 +48,11 @@ if (cisst_FOUND_AS_REQUIRED)
     target_link_libraries (sawOptoforceSensorExampleQt
                            ${sawOptoforceSensor_LIBRARIES})
     cisst_target_link_libraries (sawOptoforceSensorExampleQt ${REQUIRED_CISST_LIBRARIES})
+
+    install (TARGETS sawOptoforceSensorExampleQt COMPONENT sawOptoforceSensor-Examples
+             RUNTIME DESTINATION bin
+             LIBRARY DESTINATION lib
+             ARCHIVE DESTINATION lib)
 
   else (sawOptoforceSensor_FOUND)
     message ("Information: code in ${CMAKE_CURRENT_SOURCE_DIR} will not be compiled, it requires sawOptoforceSensor")

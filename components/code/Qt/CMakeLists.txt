@@ -1,5 +1,5 @@
 #
-# (C) Copyright 2013-2020 Johns Hopkins University (JHU), All Rights Reserved.
+# (C) Copyright 2013-2022 Johns Hopkins University (JHU), All Rights Reserved.
 #
 # --- begin cisst license - do not edit ---
 #
@@ -44,11 +44,15 @@ if (cisst_FOUND_AS_REQUIRED)
                ${sawOptoforceSensor_HEADER_DIR}/mtsOptoforce3DQtWidget.h
                mtsOptoforce3DQtWidget.cpp
                ${SAW_OPTOFORCE_SENSOR_QT_WRAP_CPP})
-  set_property (TARGET sawOptoforceSensorQt PROPERTY FOLDER "sawOptoforceSensor") 
+  set_target_properties (sawOptoforceSensorQt PROPERTIES
+                         VERSION ${sawOptoforceSensor_VERSION}
+                         FOLDER "sawOptoforceSensor")
   cisst_target_link_libraries (sawOptoforceSensorQt ${REQUIRED_CISST_LIBRARIES})
 
-  # make sure the new library is known by the parent folder to add to the config file
-  set (sawOptoforceSensorQt_LIBRARIES sawOptoforceSensorQt PARENT_SCOPE)
+  install (TARGETS sawOptoforceSensorQt COMPONENT sawOptoforceSensor-Qt
+           RUNTIME DESTINATION bin
+           LIBRARY DESTINATION lib
+           ARCHIVE DESTINATION lib)
 
 else (cisst_FOUND_AS_REQUIRED)
   message ("Information: code will not be compiled, it requires ${REQUIRED_CISST_LIBRARIES}")

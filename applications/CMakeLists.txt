@@ -37,6 +37,11 @@ if (cisst_FOUND_AS_REQUIRED)
   # link with sawOptoforceSensor library
   target_link_libraries (OptoforceCalib ${sawOptoforceSensor_LIBRARIES})
 
+  install (TARGETS OptoforceCalib COMPONENT sawOptoforceSensor-Applications
+           RUNTIME DESTINATION bin
+           LIBRARY DESTINATION lib
+           ARCHIVE DESTINATION lib)
+
 else (cisst_FOUND_AS_REQUIRED)
   message ("Information: OptoforceCalib will not be compiled, it requires ${REQUIRED_CISST_LIBRARIES}")
 endif (cisst_FOUND_AS_REQUIRED)

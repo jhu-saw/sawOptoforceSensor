@@ -1,5 +1,5 @@
 #
-# (C) Copyright 2016-2021 Johns Hopkins University (JHU), All Rights Reserved.
+# (C) Copyright 2016-2022 Johns Hopkins University (JHU), All Rights Reserved.
 #
 # --- begin cisst license - do not edit ---
 #
@@ -43,6 +43,11 @@ if (cisst_FOUND_AS_REQUIRED)
 
   # link with sawOptoforceSensor library
   target_link_libraries (OptoforceExample ${sawOptoforceSensor_LIBRARIES})
+
+  install (TARGETS OptoforceExample COMPONENT sawOptoforceSensor-Examples
+           RUNTIME DESTINATION bin
+           LIBRARY DESTINATION lib
+           ARCHIVE DESTINATION lib)
 
 else (cisst_FOUND_AS_REQUIRED)
   message ("Information: OptoforceExample will not be compiled, it requires ${REQUIRED_CISST_LIBRARIES}")

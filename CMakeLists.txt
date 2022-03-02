@@ -1,5 +1,5 @@
 #
-# (C) Copyright 2016 Johns Hopkins University (JHU), All Rights Reserved.
+# (C) Copyright 2016-2022 Johns Hopkins University (JHU), All Rights Reserved.
 #
 # --- begin cisst license - do not edit ---
 #
@@ -9,10 +9,23 @@
 #
 # --- end cisst license ---
 
-project (sawOptoforceSensorProject)
+cmake_minimum_required(VERSION 3.10)
+project (sawOptoforceSensorAll VERSION 1.1.0)
 
-cmake_minimum_required (VERSION 2.8)
+find_package (cisst REQUIRED)
+include (${CISST_USE_FILE})
+cisst_cpack_settings (
+  VENDOR "JHU"
+  MAINTAINER "anton.deguet@jhu.edu")
 
 add_subdirectory (components)
+
+set (sawOptoforceSensor_DIR "${sawOptoforceSensorAll_BINARY_DIR}/components")
 add_subdirectory (examples)
 add_subdirectory (applications)
+
+cpack_add_component (sawOptoforceSensor)
+cpack_add_component (sawOptoforceSensor-Examples
+                     DEPENDS sawOptoforceSensor)
+cpack_add_component (sawOptoforceSensor-Applications
+                     DEPENDS sawOptoforceSensor)
