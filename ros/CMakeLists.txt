@@ -9,9 +9,8 @@
 #
 # --- end cisst license ---
 
-cmake_minimum_required (VERSION 2.8.3)
-
-project (optoforce_ros)
+cmake_minimum_required(VERSION 3.10)
+project (optoforce_ros VERSION 1.1.0)
 
 ## find catkin macros and libraries
 ## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)

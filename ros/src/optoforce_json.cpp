@@ -25,7 +25,7 @@ http://www.cisst.org/cisst/license.txt.
 #include <sawOptoforceSensor/mtsOptoforce3D.h>
 #include <sawOptoforceSensor/mtsOptoforce3DQtWidget.h>
 
-#include <cisst_ros_crtk/mts_ros_crtk_bridge.h>
+#include <cisst_ros_crtk/mts_ros_crtk_bridge_provided.h>
 #include <ros/ros.h>
 
 #include <QApplication>
@@ -91,8 +91,8 @@ int main(int argc, char * argv[])
     componentManager->AddComponent(sensor);
 
     // ROS CRTK bridge
-    mts_ros_crtk_bridge * crtk_bridge
-        = new mts_ros_crtk_bridge("force_dimension_crtk_bridge", &rosNodeHandle);
+    mts_ros_crtk_bridge_provided * crtk_bridge
+        = new mts_ros_crtk_bridge_provided("force_dimension_crtk_bridge", &rosNodeHandle);
     componentManager->AddComponent(crtk_bridge);
 
     // create a Qt user interface if needed
