@@ -1,5 +1,5 @@
 #
-# (C) Copyright 2016-2022 Johns Hopkins University (JHU), All Rights Reserved.
+# (C) Copyright 2016-2023 Johns Hopkins University (JHU), All Rights Reserved.
 #
 # --- begin cisst license - do not edit ---
 #
@@ -9,7 +9,8 @@
 #
 # --- end cisst license ---
 
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 3.10)
+project (sawOptoforceSensorExampleConsole VERSION 1.1.0)
 
 # List cisst libraries needed
 set (REQUIRED_CISST_LIBRARIES cisstCommon
@@ -19,7 +20,7 @@ set (REQUIRED_CISST_LIBRARIES cisstCommon
                               cisstParameterTypes)
 
 # find cisst and make sure the required libraries have been compiled
-find_package (cisst 1.1.0 COMPONENTS ${REQUIRED_CISST_LIBRARIES})
+find_package (cisst 1.2.0 COMPONENTS ${REQUIRED_CISST_LIBRARIES})
 
 if (cisst_FOUND_AS_REQUIRED)
 
@@ -36,19 +37,19 @@ if (cisst_FOUND_AS_REQUIRED)
   include_directories (${sawOptoforceSensor_INCLUDE_DIR})
   link_directories (${sawOptoforceSensor_LIBRARY_DIR})
 
-  add_executable (OptoforceExample main.cpp)
+  add_executable (sawOptoforceSensorExampleConsole main.cpp)
 
   # link with the cisst libraries
-  cisst_target_link_libraries (OptoforceExample ${REQUIRED_CISST_LIBRARIES})
+  cisst_target_link_libraries (sawOptoforceSensorExampleConsole ${REQUIRED_CISST_LIBRARIES})
 
   # link with sawOptoforceSensor library
-  target_link_libraries (OptoforceExample ${sawOptoforceSensor_LIBRARIES})
+  target_link_libraries (sawOptoforceSensorExampleConsole ${sawOptoforceSensor_LIBRARIES})
 
-  install (TARGETS OptoforceExample COMPONENT sawOptoforceSensor-Examples
+  install (TARGETS sawOptoforceSensorExampleConsole COMPONENT sawOptoforceSensor-Examples
            RUNTIME DESTINATION bin
            LIBRARY DESTINATION lib
            ARCHIVE DESTINATION lib)
 
 else (cisst_FOUND_AS_REQUIRED)
-  message ("Information: OptoforceExample will not be compiled, it requires ${REQUIRED_CISST_LIBRARIES}")
+  message ("Information: sawOptoforceSensorExampleConsole will not be compiled, it requires ${REQUIRED_CISST_LIBRARIES}")
 endif (cisst_FOUND_AS_REQUIRED)

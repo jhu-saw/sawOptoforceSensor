@@ -1,5 +1,5 @@
 #
-# (C) Copyright 2015-2022 Johns Hopkins University (JHU), All Rights Reserved.
+# (C) Copyright 2015-2023 Johns Hopkins University (JHU), All Rights Reserved.
 #
 # --- begin cisst license - do not edit ---
 #
@@ -9,7 +9,8 @@
 #
 # --- end cisst license ---
 
-cmake_minimum_required (VERSION 2.8.3)
+cmake_minimum_required (VERSION 3.10)
+project (sawOptoforceSensorExampleQt VERSION 1.1.0)
 
 # find cisst and make sure the required libraries have been compiled
 set (REQUIRED_CISST_LIBRARIES
@@ -23,7 +24,7 @@ set (REQUIRED_CISST_LIBRARIES
      cisstParameterTypes
      cisstQt)
 
-find_package (cisst 1.1.0 REQUIRED ${REQUIRED_CISST_LIBRARIES})
+find_package (cisst 1.2.0 REQUIRED ${REQUIRED_CISST_LIBRARIES})
 
 if (cisst_FOUND_AS_REQUIRED)
 
