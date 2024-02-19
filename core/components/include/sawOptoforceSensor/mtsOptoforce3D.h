@@ -39,32 +39,36 @@ class CISST_EXPORT mtsOptoforce3D: public mtsTaskContinuous {
     mtsOptoforce3D(const std::string &name, unsigned int port);
     mtsOptoforce3D(const std::string &name, const std::string &portName);
     ~mtsOptoforce3D(void) {};
-    void Configure(const std::string &filename = "");
-    void Startup(void);
-    void Run(void);
-    void Cleanup(void);
+    void Configure(const std::string &filename = "") override;
+    void Startup(void) override;
+    void Run(void) override;
+    void Cleanup(void) override;
 
  protected:
     mtsInterfaceProvided * mInterface;
 
-    unsigned short Count;     // Counter returned by force sensor
-    unsigned short Status;    // Force sensor status
-    vctDouble3 RawSensor;     // Raw sensor readings (not calibrated)
-    vctDouble3 Force;         // Force values (x, y, z)
-    vctDouble3 Length;        // offset vector to where force is resolved
-    prmForceCartesianGet ForceTorque;  // Force/torque (torque is 0)
+    unsigned short mCount;     // Counter returned by force sensor
+    unsigned short mStatus;    // Force sensor status
+    vctDouble3 mRawSensor;     // Raw sensor readings (not calibrated)
+    vctDouble3 mForce;         // Force values (x, y, z)
+    vctDouble3 mLength
+        = vctDouble3(0.0);     // offset vector to where force is resolved
+    prmForceCartesianGet m_measured_cf; // Force/torque (torque is 0)
 
-    vctDouble3 bias;          // Force sensor bias, in counts
-    vctDouble3 scale;         // Force sensor scale, Newtons/count
-    vctDouble3x6 matrix_a;    // intermediate calibration matrix (A)
-    vctDouble6x3 matrix_l;    // matrix used to store lengths (L)
-    vctDouble3x3 matrix_cal;  // final calibration matrix, inv(A*L)
-    bool matrix_a_valid;      // Whether matrix_a is valid
+    vctDouble3 mBias
+        = vctDouble3(0.0);      // Force sensor bias, in counts
+    vctDouble3 mScale
+        = vctDouble3(1.0);      // Force sensor scale, Newtons/count
+    vctDouble3x6 mA;            // intermediate calibration matrix (A)
+    vctDouble6x3 mL
+        = vctDouble6x3(0.0);    // matrix used to store lengths (L)
+    vctDouble3x3 mCal;          // final calibration matrix, inv(A*L)
+    bool mMatrixAValid = false; // Whether matrix_a is valid
 
     // shadow variables for sensor speed and filter
-    unsigned char sensorSpeed;
-    unsigned char sensorFilter;
-    unsigned char sensorBias;
+    unsigned char mSensorSpeed = 10; // 100Hz
+    unsigned char mSensorFilter = 4; // 15Hz
+    unsigned char mSensorBias = 0;   // unbias
 
     void Init(void);          // Initialization (called from constructors)
     void SendCommand(unsigned char speed, unsigned char filter, unsigned char zero);
@@ -80,9 +84,9 @@ class CISST_EXPORT mtsOptoforce3D: public mtsTaskContinuous {
     void SetLength(const vctDouble3 &len);  // Set length offset to where force is resolved
     void GetScale(vctDouble3 &s) const;     // Get sensor scale (N/bit)
     void SetScale(const vctDouble3 &s);     // Set sensor scale (N/bit)
-    osaSerialPort serialPort;
-    bool configured;
-    bool connected;
+    osaSerialPort mSerialPort;
+    bool mConfigured = false;
+    bool mConnected = false;
 };
 
 

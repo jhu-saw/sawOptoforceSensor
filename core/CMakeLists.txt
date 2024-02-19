@@ -1,5 +1,5 @@
 #
-# (C) Copyright 2016-2022 Johns Hopkins University (JHU), All Rights Reserved.
+# (C) Copyright 2016-2024 Johns Hopkins University (JHU), All Rights Reserved.
 #
 # --- begin cisst license - do not edit ---
 #
@@ -10,7 +10,7 @@
 # --- end cisst license ---
 
 cmake_minimum_required(VERSION 3.10)
-project (sawOptoforceSensorAll VERSION 1.1.0)
+project (sawOptoforceSensorCore VERSION 1.1.0)
 
 find_package (cisst REQUIRED)
 include (${CISST_USE_FILE})
@@ -20,7 +20,7 @@ cisst_cpack_settings (
 
 add_subdirectory (components)
 
-set (sawOptoforceSensor_DIR "${sawOptoforceSensorAll_BINARY_DIR}/components")
+set (sawOptoforceSensor_DIR "${sawOptoforceSensorCore_BINARY_DIR}/components")
 add_subdirectory (examples)
 add_subdirectory (applications)
 

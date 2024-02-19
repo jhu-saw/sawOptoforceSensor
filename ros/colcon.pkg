@@ -1,0 +1,4 @@
+{
+  "name": "optoforce",
+  "dependencies": ["cisst_ros_crtk", "sawOptoforceSensorCore"]
+}

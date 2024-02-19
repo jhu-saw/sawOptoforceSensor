@@ -5,7 +5,7 @@
   Author(s):  Anton Deguet
   Created on: 2014-07-21
 
-  (C) Copyright 2014-2022 Johns Hopkins University (JHU), All Rights Reserved.
+  (C) Copyright 2014-2024 Johns Hopkins University (JHU), All Rights Reserved.
 
 --- begin cisst license - do not edit ---
 
@@ -26,7 +26,6 @@ http://www.cisst.org/cisst/license.txt.
 #include <sawOptoforceSensor/mtsOptoforce3DQtWidget.h>
 
 #include <cisst_ros_crtk/mts_ros_crtk_bridge_provided.h>
-#include <ros/ros.h>
 
 #include <QApplication>
 #include <QMainWindow>
@@ -42,8 +41,8 @@ int main(int argc, char * argv[])
     cmnLogger::AddChannel(std::cerr, CMN_LOG_ALLOW_ERRORS_AND_WARNINGS);
 
     // create ROS node handle
-    ros::init(argc, argv, "force_dimension", ros::init_options::AnonymousName);
-    ros::NodeHandle rosNodeHandle;
+    cisst_ral::ral ral(argc, argv, "optoforce");
+    auto rosNode = ral.node();
 
     // parse options
     cmnCommandLineOptions options;
@@ -70,10 +69,7 @@ int main(int argc, char * argv[])
                              "text only interface, do not create Qt widgets");
 
     // check that all required options have been provided
-    std::string errorMessage;
-    if (!options.Parse(argc, argv, errorMessage)) {
-        std::cerr << "Error: " << errorMessage << std::endl;
-        options.PrintUsage(std::cerr);
+    if (!options.Parse(argc, argv, std::cerr)) {
         return -1;
     }
     std::string arguments;
@@ -92,7 +88,7 @@ int main(int argc, char * argv[])
 
     // ROS CRTK bridge
     mts_ros_crtk_bridge_provided * crtk_bridge
-        = new mts_ros_crtk_bridge_provided("force_dimension_crtk_bridge", &rosNodeHandle);
+        = new mts_ros_crtk_bridge_provided("force_dimension_crtk_bridge", rosNode);
     componentManager->AddComponent(crtk_bridge);
 
     // create a Qt user interface if needed
@@ -135,11 +131,15 @@ int main(int argc, char * argv[])
         } while (cmnGetChar() != 'q');
     }
 
+    // stop all logs
+    cmnLogger::Kill();
+
+    // stop ROS node
+    cisst_ral::shutdown();
+
     // kill all components and perform cleanup
     componentManager->KillAllAndWait(5.0 * cmn_s);
     componentManager->Cleanup();
-
-    cmnLogger::Kill();
 
     return 0;
 }
