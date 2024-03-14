@@ -1,14 +1,13 @@
-sawOptoforceSensor
-==================
+# sawOptoforceSensor
 
 cisst/SAW component to interface via USB (virtual COM port) to Optoforce force sensor.
 
-**Windows:**
+## Windows
 
  + Requires a virtual COM driver from Microchip, which is available on the USB stick provided by Optoforce
    (see /DAQ Material/USB/Driver, if not automatically installed by Windows).
 
-**Linux:**
+## Linux
 
  + Linux automatically creates serial device, such as `ttyACM0`.
  + Check default permissions on `/dev/ttyACM0` using `ls -l /dev/ttyACM0`.  On Ubuntu a typical output should be:
@@ -23,7 +22,11 @@ cisst/SAW component to interface via USB (virtual COM port) to Optoforce force s
    OptoforceExample /dev/ttyACM0  OMD-10-SE-10N.json
    ```
 
-**ROS:**
+### Build
+
+See https://github.com/jhu-saw/vcs for download and build instructions.  Use the VCS files for `optoforce`.
+
+### ROS
  + Package name is `optoforce_ros`, main node example is `optoforce_json`
  + The option `-t` starts the node in text only mode, otherwise the node has a Qt based GUI
  + The option `-n` allows to set the ROS namespace (default is `/optoforce`).  This is useful if you have multiple force sensors
@@ -38,7 +41,7 @@ cisst/SAW component to interface via USB (virtual COM port) to Optoforce force s
    - text only interface, do not create Qt widgets []
    ```
 
-**All:**
+## All
 
 The software expects a JSON format configuration file, which should specify the force sensor scale and
 (optionally) a calibration matrix, `cal-matrix`. See the sample JSON configuration files in the `share` folder.
@@ -55,12 +58,12 @@ to decouple the measurements and extract the forces. The software component supp
 the JSON file specifies the correct `cal-matrix` and you specify where the forces are applied by invoking
 the `SetLength` write command.
 
-Links
-=====
+## Links
+
  * License: http://github.com/jhu-cisst/cisst/blob/master/license.txt
  * JHU-LCSR software: http://jhu-lcsr.github.io/software/
  
-Dependencies
-============
+## Dependencies
+
  * Linux, Mac OS, Windows, ...
  * cisst libraries: https://github.com/jhu-cisst/cisst
