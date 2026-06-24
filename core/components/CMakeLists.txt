@@ -1,5 +1,5 @@
 #
-# (C) Copyright 2016-2023 Johns Hopkins University (JHU), All Rights Reserved.
+# (C) Copyright 2016-2026 Johns Hopkins University (JHU), All Rights Reserved.
 #
 # --- begin cisst license - do not edit ---
 #
@@ -22,10 +22,7 @@ set (REQUIRED_CISST_LIBRARIES cisstCommon
 
 find_package (cisst 1.2.0 COMPONENTS ${REQUIRED_CISST_LIBRARIES})
 
-if (cisst_FOUND_AS_REQUIRED)
-
-  # load cisst configuration
-  include (${CISST_USE_FILE})
+if (cisst_FOUND)
 
   # catkin/ROS paths
   cisst_set_output_path ()
@@ -54,11 +51,11 @@ if (cisst_FOUND_AS_REQUIRED)
                ${sawOptoforceSensor_HEADER_DIR}/mtsOptoforce3D.h
                ${sawOptoforceSensor_BINARY_DIR}/include/sawOptoforceSensor/sawOptoforceSensorRevision.h)
 
-   set_target_properties (sawOptoforceSensor PROPERTIES
-                          VERSION ${sawOptoforceSensor_VERSION}
-                          FOLDER "sawOptoforceSensor")
+  set_target_properties (sawOptoforceSensor PROPERTIES
+                         VERSION ${sawOptoforceSensor_VERSION}
+                         FOLDER "sawOptoforceSensor")
 
-  cisst_target_link_libraries (sawOptoforceSensor ${REQUIRED_CISST_LIBRARIES})
+  target_link_libraries (sawOptoforceSensor ${cisst_LIBRARIES})
 
   # Install target for headers and library
   install (DIRECTORY "${sawOptoforceSensor_SOURCE_DIR}/include/sawOptoforceSensor"
@@ -72,6 +69,6 @@ if (cisst_FOUND_AS_REQUIRED)
            LIBRARY DESTINATION lib
            ARCHIVE DESTINATION lib)
 
-else (cisst_FOUND_AS_REQUIRED)
+else (cisst_FOUND)
   message ("Information: code in ${CMAKE_CURRENT_SOURCE_DIR} will not be compiled, it requires ${REQUIRED_CISST_LIBRARIES}")
-endif (cisst_FOUND_AS_REQUIRED)
+endif (cisst_FOUND)

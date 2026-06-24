@@ -1,5 +1,5 @@
 #
-# (C) Copyright 2013-2022 Johns Hopkins University (JHU), All Rights Reserved.
+# (C) Copyright 2013-2026 Johns Hopkins University (JHU), All Rights Reserved.
 #
 # --- begin cisst license - do not edit ---
 #
@@ -18,42 +18,31 @@ set (REQUIRED_CISST_LIBRARIES
      cisstMultiTask
      cisstMultiTaskQt
      cisstParameterTypes
-     cisstParameterTypesQt
-     cisstQt)
+     cisstParameterTypesQt)
 
 # cisst
-find_package (cisst REQUIRED ${REQUIRED_CISST_LIBRARIES})
+find_package (cisst COMPONENTS ${REQUIRED_CISST_LIBRARIES})
 
-if (cisst_FOUND_AS_REQUIRED)
-
-  # cisst
-  include (${CISST_USE_FILE})
+if (cisst_FOUND)
 
   # for Qt generated header files
   include_directories (${CMAKE_CURRENT_BINARY_DIR})
-  if (CISST_HAS_QT4)
-    qt4_wrap_cpp (SAW_OPTOFORCE_SENSOR_QT_WRAP_CPP
-                  ${sawOptoforceSensor_HEADER_DIR}/mtsOptoforce3DQtWidget.h
-                  )
-  else (CISST_HAS_QT4)
-    set (CMAKE_AUTOMOC ON)
-  endif (CISST_HAS_QT4)
+  set (CMAKE_AUTOMOC ON)
 
   add_library (sawOptoforceSensorQt
                ${sawOptoforceSensor_HEADER_DIR}/sawOptoforceSensorQtExport.h
                ${sawOptoforceSensor_HEADER_DIR}/mtsOptoforce3DQtWidget.h
-               mtsOptoforce3DQtWidget.cpp
-               ${SAW_OPTOFORCE_SENSOR_QT_WRAP_CPP})
+               mtsOptoforce3DQtWidget.cpp)
   set_target_properties (sawOptoforceSensorQt PROPERTIES
                          VERSION ${sawOptoforceSensor_VERSION}
                          FOLDER "sawOptoforceSensor")
-  cisst_target_link_libraries (sawOptoforceSensorQt ${REQUIRED_CISST_LIBRARIES})
+  target_link_libraries (sawOptoforceSensorQt ${cisst_LIBRARIES})
 
   install (TARGETS sawOptoforceSensorQt COMPONENT sawOptoforceSensor-Qt
            RUNTIME DESTINATION bin
            LIBRARY DESTINATION lib
            ARCHIVE DESTINATION lib)
 
-else (cisst_FOUND_AS_REQUIRED)
+else (cisst_FOUND)
   message ("Information: code will not be compiled, it requires ${REQUIRED_CISST_LIBRARIES}")
-endif (cisst_FOUND_AS_REQUIRED)
+endif (cisst_FOUND)

@@ -1,5 +1,5 @@
 #
-# (C) Copyright 2016-2023 Johns Hopkins University (JHU), All Rights Reserved.
+# (C) Copyright 2016-2026 Johns Hopkins University (JHU), All Rights Reserved.
 #
 # --- begin cisst license - do not edit ---
 #
@@ -22,16 +22,9 @@ set (REQUIRED_CISST_LIBRARIES cisstCommon
 # find cisst and make sure the required libraries have been compiled
 find_package (cisst 1.2.0 COMPONENTS ${REQUIRED_CISST_LIBRARIES})
 
-if (cisst_FOUND_AS_REQUIRED)
+if (cisst_FOUND)
 
-  # load cisst configuration
-  include (${CISST_USE_FILE})
-
-  # catkin/ROS paths
-  cisst_is_catkin_build (sawOptoforceSensorExamples_IS_CATKIN_BUILT)
-  if (sawOptoforceSensorExamples_IS_CATKIN_BUILT)
-    set (EXECUTABLE_OUTPUT_PATH "${CATKIN_DEVEL_PREFIX}/bin")
-  endif ()
+  cisst_set_output_path ()
 
   find_package (sawOptoforceSensor 1.1.0 REQUIRED)
   include_directories (${sawOptoforceSensor_INCLUDE_DIR})
@@ -39,17 +32,18 @@ if (cisst_FOUND_AS_REQUIRED)
 
   add_executable (sawOptoforceSensorExampleConsole main.cpp)
 
-  # link with the cisst libraries
-  cisst_target_link_libraries (sawOptoforceSensorExampleConsole ${REQUIRED_CISST_LIBRARIES})
-
   # link with sawOptoforceSensor library
-  target_link_libraries (sawOptoforceSensorExampleConsole ${sawOptoforceSensor_LIBRARIES})
+  target_link_libraries (
+    sawOptoforceSensorExampleConsole
+    ${sawOptoforceSensor_LIBRARIES}
+    ${cisst_LIBRARIES}
+    )
 
   install (TARGETS sawOptoforceSensorExampleConsole COMPONENT sawOptoforceSensor-Examples
            RUNTIME DESTINATION bin
            LIBRARY DESTINATION lib
            ARCHIVE DESTINATION lib)
 
-else (cisst_FOUND_AS_REQUIRED)
+else (cisst_FOUND)
   message ("Information: sawOptoforceSensorExampleConsole will not be compiled, it requires ${REQUIRED_CISST_LIBRARIES}")
-endif (cisst_FOUND_AS_REQUIRED)
+endif (cisst_FOUND)

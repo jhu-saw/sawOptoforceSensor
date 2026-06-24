@@ -1,5 +1,5 @@
 #
-# (C) Copyright 2016 Johns Hopkins University (JHU), All Rights Reserved.
+# (C) Copyright 2016-2026 Johns Hopkins University (JHU), All Rights Reserved.
 #
 # --- begin cisst license - do not edit ---
 #
@@ -20,28 +20,26 @@ set (REQUIRED_CISST_LIBRARIES cisstCommon
 # find cisst and make sure the required libraries have been compiled
 find_package (cisst COMPONENTS ${REQUIRED_CISST_LIBRARIES})
 
-if (cisst_FOUND_AS_REQUIRED)
+if (cisst_FOUND)
 
-  # load cisst configuration
-  include (${CISST_USE_FILE})
+  if (CISST_HAS_CISSTNETLIB)
+    find_package (sawOptoforceSensor REQUIRED)
+    include_directories (${sawOptoforceSensor_INCLUDE_DIR})
+    link_directories (${sawOptoforceSensor_LIBRARY_DIR})
 
-  find_package (sawOptoforceSensor REQUIRED)
-  include_directories (${sawOptoforceSensor_INCLUDE_DIR})
-  link_directories (${sawOptoforceSensor_LIBRARY_DIR})
+    add_executable (OptoforceCalib calibration.cpp)
 
-  add_executable (OptoforceCalib calibration.cpp)
+    # link with sawOptoforceSensor library
+    target_link_libraries (OptoforceCalib ${sawOptoforceSensor_LIBRARIES} ${cisst_LIBRARIES})
 
-  # link with the cisst libraries
-  cisst_target_link_libraries (OptoforceCalib ${REQUIRED_CISST_LIBRARIES})
+    install (TARGETS OptoforceCalib COMPONENT sawOptoforceSensor-Applications
+             RUNTIME DESTINATION bin
+             LIBRARY DESTINATION lib
+             ARCHIVE DESTINATION lib)
+  else ()
+    message (STATUS "Information: OptoforceCalib will not be compiled, it requires CISST_HAS_CISSTNETLIB")
+  endif ()
 
-  # link with sawOptoforceSensor library
-  target_link_libraries (OptoforceCalib ${sawOptoforceSensor_LIBRARIES})
-
-  install (TARGETS OptoforceCalib COMPONENT sawOptoforceSensor-Applications
-           RUNTIME DESTINATION bin
-           LIBRARY DESTINATION lib
-           ARCHIVE DESTINATION lib)
-
-else (cisst_FOUND_AS_REQUIRED)
+else (cisst_FOUND)
   message ("Information: OptoforceCalib will not be compiled, it requires ${REQUIRED_CISST_LIBRARIES}")
-endif (cisst_FOUND_AS_REQUIRED)
+endif (cisst_FOUND)
