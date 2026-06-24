@@ -1,5 +1,5 @@
 #
-# (C) Copyright 2015-2024 Johns Hopkins University (JHU), All Rights Reserved.
+# (C) Copyright 2015-2026 Johns Hopkins University (JHU), All Rights Reserved.
 #
 # --- begin cisst license - do not edit ---
 #
@@ -53,15 +53,11 @@ set (REQUIRED_CISST_LIBRARIES
   cisstOSAbstraction
   cisstMultiTask
   cisstMultiTaskQt
-  cisstParameterTypes
-  cisstQt)
+  cisstParameterTypes)
 
-find_package (cisst 1.2.1 REQUIRED ${REQUIRED_CISST_LIBRARIES})
+find_package (cisst 1.2.1 REQUIRED COMPPONENTS ${REQUIRED_CISST_LIBRARIES})
 
-if (cisst_FOUND_AS_REQUIRED)
-
-  # load cisst configuration
-  include (${CISST_USE_FILE})
+if (cisst_FOUND)
 
   # set paths
   cisst_set_output_path ()
@@ -78,8 +74,8 @@ if (cisst_FOUND_AS_REQUIRED)
     add_executable (optoforce src/optoforce.cpp)
     target_link_libraries (optoforce
       ${sawOptoforceSensor_LIBRARIES}
-      ${catkin_LIBRARIES})
-    cisst_target_link_libraries (optoforce ${REQUIRED_CISST_LIBRARIES})
+      ${catkin_LIBRARIES}
+      ${cisst_LIBRARIES})
 
     install (TARGETS optoforce
       LIBRARY DESTINATION lib/${PROJECT_NAME}
@@ -99,4 +95,4 @@ if (cisst_FOUND_AS_REQUIRED)
     message ("Information: code in ${CMAKE_CURRENT_SOURCE_DIR} will not be compiled, it requires sawOptoforceSensor")
   endif (sawOptoforceSensor_FOUND)
 
-endif (cisst_FOUND_AS_REQUIRED)
+endif (cisst_FOUND)
