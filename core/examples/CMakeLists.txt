@@ -9,9 +9,8 @@
 #
 # --- end cisst license ---
 
-project (sawOptoforceSensorExamples)
-
-cmake_minimum_required (VERSION 2.8)
+cmake_minimum_required (VERSION 3.10)
+project (sawOptoforceSensorExamples VERSION 1.1.0)
 
 add_subdirectory (console)
 add_subdirectory (Qt)
