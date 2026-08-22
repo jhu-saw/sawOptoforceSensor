@@ -1,6 +1,13 @@
 Change log
 ==========
 
+1.2.0 (TBD)
+===========
+
+* Build:
+  * Updated CMake configuration for the current cisst release.
+  * Added ROS 2 build support.
+
 1.1.0 (2019-04-25)
 ==================
 

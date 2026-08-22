@@ -10,7 +10,7 @@
 # --- end cisst license ---
 
 cmake_minimum_required(VERSION 3.10)
-project (optoforce VERSION 1.1.0)
+project (optoforce VERSION 1.2.0)
 
 # first test for ROS1
 set (ROS1_depends cisst_ros_crtk roscpp roslib)
@@ -55,7 +55,7 @@ set (REQUIRED_CISST_LIBRARIES
   cisstMultiTaskQt
   cisstParameterTypes)
 
-find_package (cisst 1.2.1 REQUIRED COMPPONENTS ${REQUIRED_CISST_LIBRARIES})
+find_package (cisst 1.2.1 REQUIRED COMPONENTS ${REQUIRED_CISST_LIBRARIES})
 
 if (cisst_FOUND)
 
@@ -63,7 +63,7 @@ if (cisst_FOUND)
   cisst_set_output_path ()
 
   # sawOptoforceSensor has been compiled within cisst, we should find it automatically
-  find_package (sawOptoforceSensor 1.1.0)
+  find_package (sawOptoforceSensor 1.2.0)
 
   if (sawOptoforceSensor_FOUND)
 
