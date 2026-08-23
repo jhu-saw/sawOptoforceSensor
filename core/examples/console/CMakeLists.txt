@@ -10,7 +10,7 @@
 # --- end cisst license ---
 
 cmake_minimum_required (VERSION 3.10)
-project (sawOptoforceSensorExampleConsole VERSION 1.1.0)
+project (sawOptoforceSensorExampleConsole VERSION 1.2.0)
 
 # List cisst libraries needed
 set (REQUIRED_CISST_LIBRARIES cisstCommon
@@ -26,7 +26,7 @@ if (cisst_FOUND)
 
   cisst_set_output_path ()
 
-  find_package (sawOptoforceSensor 1.1.0 REQUIRED)
+  find_package (sawOptoforceSensor 1.2.0 REQUIRED)
   include_directories (${sawOptoforceSensor_INCLUDE_DIR})
   link_directories (${sawOptoforceSensor_LIBRARY_DIR})
 
